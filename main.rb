@@ -15,11 +15,11 @@ weather = forecast.values[6].values[2][0]
 date = Time.at(weather.values[0]).strftime("%d-%m-%y")
 summary = weather.values[1]
 icon = weather.values[2]
-temperature_min = weather.values[11]
-temperature_max = weather.values[13]
+temperature_min = weather.values[11].round
+temperature_max = weather.values[13].round
 sunrise = Time.at(weather.values[3]).strftime("%H:%M")
 sunset = Time.at(weather.values[4]).strftime("%H:%M")
-wind = weather.values[9]
+wind = weather.values[9].round(1)
 
 t1 = "+#{temperature_min}" if temperature_min > 0
 t2 = "+#{temperature_max}" if temperature_max > 0
