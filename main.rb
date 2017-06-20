@@ -26,7 +26,6 @@ soccer.each do |el|
 	info = el.css('.mixedtxt-item-text a')[0].text
 	soccerlive = [time, info]*" - "
 end
-#binding.pry
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
 	bot.listen do |message|
