@@ -8,14 +8,21 @@ TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
 ForecastIO.api_key = '3865f8bb801a9ea17907c763534526c0'
 
-forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', exclude: 'currently', units: 'auto' })
-weather = forecast.values[4].values[2][0]
+forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', exclude: 'alerts', units: 'auto' })
+
+weather = forecast.values[6].values[2][0]
+
 date = Time.at(weather.values[0]).strftime("%d-%m-%y")
-time = Time.at(weather.values[0]).strftime("%H:%M"),
-summary = weather.values[1],
-icon = weather.values[2],
-temperature = weather.values[5],
+summary = weather.values[1]
+icon = weather.values[2]
+temperature_min = weather.values[11]
+temperature_max = weather.values[13]
+sunrise = Time.at(weather.values[3]).strftime("%H:%M")
+sunset = Time.at(weather.values[4]).strftime("%H:%M")
 wind = weather.values[9]
+
+t1 = "+#{temperature_min}" if temperature_min > 0
+t2 = "+#{temperature_max}" if temperature_max > 0
 
 doc = Nokogiri::HTML(open("https://www.liveresult.ru/"))
 
@@ -44,7 +51,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		when "weather"
 		 	bot.api.send_message(
 		 		chat_id: message.chat.id,
-		 		text: "Дата: #{date} / Время: #{time} / Температура: #{temperature}C / Ветер: #{wind}м/с / #{summary} / #{icon}"
+		 		text: "Дата: #{date} / Температура: #{t1}C .. #{t2}C / Восход: #{sunrise} / Закат #{sunset} / Ветер: #{wind}м/с / #{summary} / #{icon}"
 		 	)
 	  end
 	end
