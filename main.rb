@@ -17,7 +17,7 @@ icon = weather.values[2],
 temperature = weather.values[5],
 wind = weather.values[9]
 
-doc = Nokogiri::HTML(open("http://www.liveresult.ru/"))
+doc = Nokogiri::HTML(open("https://www.liveresult.ru/"))
 
 soccer = doc.css('#s_172_actual_pane .mixedtxt-item:not(.date)')
 soccerlive = []
