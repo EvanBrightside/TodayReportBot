@@ -24,6 +24,25 @@ wind = weather.values[9].round(1)
 t1 = "+#{temperature_min}" if temperature_min > 0
 t2 = "+#{temperature_max}" if temperature_max > 0
 
+if icon == "rain" || icon == "light rain"
+	ic = "☔"
+elsif icon == "cloudy"
+	ic = "☁️"
+elsif icon == "partly-cloudy-day"
+	ic = "⛅"
+else
+	icon
+end
+
+base_text = [
+	"Дата: #{date}",
+	"Температура: #{t1}C .. #{t2}C",
+	"Восход: #{sunrise}",
+	"Закат #{sunset}",
+	"Ветер: #{wind}м/с",
+	"#{summary} #{ic}"
+	]*"\n"
+
 doc = Nokogiri::HTML(open("https://www.liveresult.ru/"))
 
 soccer = doc.css('#s_172_actual_pane .mixedtxt-item:not(.date)')
@@ -37,7 +56,7 @@ end
 Telegram::Bot::Client.run(TOKEN) do |bot|
 	bot.listen do |message|
 		kb = [
-		 	Telegram::Bot::Types::KeyboardButton.new(text: 'live'),
+		 	Telegram::Bot::Types::KeyboardButton.new(text: 'soccer'),
 		 	Telegram::Bot::Types::KeyboardButton.new(text: 'weather'),
 		 	Telegram::Bot::Types::KeyboardButton.new(text: 'location', request_location: true)
 	  	]
@@ -51,8 +70,12 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		when "weather"
 		 	bot.api.send_message(
 		 		chat_id: message.chat.id,
-		 		text: "Дата: #{date} / Температура: #{t1}C .. #{t2}C / Восход: #{sunrise} / Закат #{sunset} / Ветер: #{wind}м/с / #{summary} / #{icon}"
+		 		text: base_text
 		 	)
 	  end
 	end
 end
+
+
+
+# "Дата: #{date} / Температура: #{t1}C .. #{t2}C / Восход: #{sunrise} / Закат #{sunset} / Ветер: #{wind}м/с / #{summary} / #{icon}"
