@@ -65,7 +65,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		case message.text
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey!, #{message.from.first_name}", reply_markup: markup)
-		when "live"
+		when "soccer"
 			bot.api.send_message(chat_id: message.chat.id, text: "#{soccerlive}")
 		when "weather"
 		 	bot.api.send_message(
