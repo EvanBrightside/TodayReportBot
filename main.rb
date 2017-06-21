@@ -12,7 +12,7 @@ forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', e
 
 weather = forecast.values[6].values[2][0]
 
-date = Time.at(weather.values[0]).strftime("%d-%m-%y")
+date = Time.at(weather.values[0]).strftime("%d %B %a")
 summary = weather.values[1]
 icon = weather.values[2]
 temperature_min = weather.values[11].round
@@ -35,8 +35,8 @@ else
 end
 
 base_text = [
-	"Дата: #{date}",
-	"Температура: #{t1}C .. #{t2}C",
+	"Сегодня: #{date}",
+	"Температура: #{t1}°C .. #{t2}°C",
 	"Восход: #{sunrise}",
 	"Закат #{sunset}",
 	"Ветер: #{wind}м/с",
@@ -50,7 +50,7 @@ soccerlive = []
 soccer.each do |el|
 	time = el.css('.mixedtxt-item-info .date')[0].text
 	info = el.css('.mixedtxt-item-text a')[0].text
-	soccerlive = [time, info]*" - "
+	soccerlive << [time, info]
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
@@ -75,7 +75,3 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 	  end
 	end
 end
-
-
-
-# "Дата: #{date} / Температура: #{t1}C .. #{t2}C / Восход: #{sunrise} / Закат #{sunset} / Ветер: #{wind}м/с / #{summary} / #{icon}"
