@@ -1,8 +1,8 @@
 require 'telegram/bot'
-require 'nokogiri'
-require 'open-uri'
 require 'pry'
 require 'forecast_io'
+require 'rss'
+require 'httparty'
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
@@ -43,14 +43,15 @@ base_text = [
 	"#{summary} #{ic}"
 	]*"\n"
 
-doc = Nokogiri::HTML(open("https://www.liveresult.ru/"))
+response = HTTParty.get 'https://www.liveresult.ru/football/txt/rss'
+feed = RSS::Parser.parse response.body
 
-soccer = doc.css('#s_172_actual_pane .mixedtxt-item:not(.date)')
 soccerlive = []
-soccer.each do |el|
-	time = el.css('.mixedtxt-item-info .date')[0].text
-	info = el.css('.mixedtxt-item-text a')[0].text
-	soccerlive << [time, info]
+feed.items.each do |item|
+ 	title = item.title
+ 	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
+  link = item.link
+  soccerlive << [title, date, link]
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
@@ -66,12 +67,9 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey!, #{message.from.first_name}", reply_markup: markup)
 		when "soccer"
-			bot.api.send_message(chat_id: message.chat.id, text: "#{soccerlive}")
+			bot.api.send_message(chat_id: message.chat.id, text: soccerlive*"\n")
 		when "weather"
-		 	bot.api.send_message(
-		 		chat_id: message.chat.id,
-		 		text: base_text
-		 	)
+		 	bot.api.send_message(chat_id: message.chat.id, text: base_text)
 	  end
 	end
 end
