@@ -55,16 +55,19 @@ end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
 	bot.listen do |message|
-
- 	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(⚽soccer ⛅weather)])
+ 	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(⚽Soccer ⛅Weather), %w(📰RubyWeekly 🏦Currency)], resize_keyboard: true)
 
 		case message.text
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
-		when "⚽soccer"
+		when "⚽Soccer"
 			bot.api.send_message(chat_id: message.chat.id, text: soccerlive*"\n")
-		when "⛅weather"
+		when "⛅Weather"
 		 	bot.api.send_message(chat_id: message.chat.id, text: base_text)
+		when "📰RubyWeekly"
+		 	bot.api.send_message(chat_id: message.chat.id, text: "Скоро тут будут новости про Ruby!")
+		when "🏦Currency"
+		 	bot.api.send_message(chat_id: message.chat.id, text: "Скоро тут будут курсы валют!")
 	  end
 	end
 end
