@@ -2,8 +2,8 @@ require 'telegram/bot'
 require 'pry'
 require 'forecast_io'
 require 'rss'
+require 'nokogiri'
 require 'httparty'
-require 'rss'
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
@@ -45,8 +45,8 @@ base_text = [
 	]*"\n"
 
 soccerlive = []
-rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss', false)
-rss.items.each do |item|
+soccer_rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
+soccer_rss.items.each do |item|
  	title = item.title
  	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
   link = item.link
@@ -55,19 +55,15 @@ end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
 	bot.listen do |message|
-		kb = [
-		 	Telegram::Bot::Types::KeyboardButton.new(text: 'soccer'),
-		 	Telegram::Bot::Types::KeyboardButton.new(text: 'weather'),
-		 	Telegram::Bot::Types::KeyboardButton.new(text: 'location', request_location: true)
-	  	]
- 	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: kb)
+
+ 	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(⚽soccer ⛅weather)])
 
 		case message.text
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
-		when "soccer"
+		when "⚽soccer"
 			bot.api.send_message(chat_id: message.chat.id, text: soccerlive*"\n")
-		when "weather"
+		when "⛅weather"
 		 	bot.api.send_message(chat_id: message.chat.id, text: base_text)
 	  end
 	end
