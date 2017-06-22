@@ -3,6 +3,7 @@ require 'pry'
 require 'forecast_io'
 require 'rss'
 require 'httparty'
+require 'rss'
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
@@ -43,11 +44,9 @@ base_text = [
 	"#{summary} #{ic}"
 	]*"\n"
 
-response = HTTParty.get 'https://www.liveresult.ru/football/txt/rss'
-feed = RSS::Parser.parse response.body
-
 soccerlive = []
-feed.items.each do |item|
+rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss', false)
+rss.items.each do |item|
  	title = item.title
  	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
   link = item.link
@@ -65,7 +64,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
 		case message.text
 		when "/start"
-			bot.api.send_message(chat_id: message.chat.id, text: "Hey!, #{message.from.first_name}", reply_markup: markup)
+			bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
 		when "soccer"
 			bot.api.send_message(chat_id: message.chat.id, text: soccerlive*"\n")
 		when "weather"
