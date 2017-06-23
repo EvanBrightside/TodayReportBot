@@ -44,13 +44,16 @@ base_text = [
 	"#{summary} #{ic}"
 	]*"\n"
 
-soccerlive = []
-soccer_rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
-soccer_rss.items.each do |item|
- 	title = item.title
- 	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
-  link = item.link
-  soccerlive << [title, date, link]
+def soccer
+	soccerlive = []
+	soccer_rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
+	soccer_rss.items.each do |item|
+	 	title = item.title
+	 	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
+	  link = item.link
+	  soccerlive << [title, date, link]
+	end
+	soccerlive
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
@@ -61,7 +64,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
 		when "⚽Soccer"
-			bot.api.send_message(chat_id: message.chat.id, text: soccerlive*"\n")
+			bot.api.send_message(chat_id: message.chat.id, text: soccer*"\n")
 		when "⛅Weather"
 		 	bot.api.send_message(chat_id: message.chat.id, text: base_text)
 		when "📰RubyWeekly"
