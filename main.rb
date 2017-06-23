@@ -8,45 +8,47 @@ require 'open-uri'
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
-ForecastIO.api_key = '3865f8bb801a9ea17907c763534526c0'
+def weather
+	ForecastIO.api_key = '3865f8bb801a9ea17907c763534526c0'
 
-forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', exclude: 'alerts', units: 'auto' })
+	forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', exclude: 'alerts', units: 'auto' })
 
-weather = forecast.values[6].values[2][0]
+	weather = forecast.values[6].values[2][0]
 
-date = Time.at(weather.values[0]).strftime("%d %B %a")
-summary = weather.values[1]
-icon = weather.values[2]
-temperature_now = forecast.values[4].values[5].round
-temperature_min = weather.values[11].round
-temperature_max = weather.values[13].round
-sunrise = Time.at(weather.values[3]).strftime("%H:%M")
-sunset = Time.at(weather.values[4]).strftime("%H:%M")
-wind = weather.values[9].round(1)
+	date = Time.at(weather.values[0]).strftime("%d %B %a")
+	summary = weather.values[1]
+	icon = weather.values[2]
+	temperature_now = forecast.values[4].values[5].round
+	temperature_min = weather.values[11].round
+	temperature_max = weather.values[13].round
+	sunrise = Time.at(weather.values[3]).strftime("%H:%M")
+	sunset = Time.at(weather.values[4]).strftime("%H:%M")
+	wind = weather.values[9].round(1)
 
-t0 = "+#{temperature_now}" if temperature_now > 0
-t1 = "+#{temperature_min}" if temperature_min > 0
-t2 = "+#{temperature_max}" if temperature_max > 0
+	t0 = "+#{temperature_now}" if temperature_now > 0
+	t1 = "+#{temperature_min}" if temperature_min > 0
+	t2 = "+#{temperature_max}" if temperature_max > 0
 
-if icon == "rain" || icon == "light rain"
-	ic = "☔"
-elsif icon == "cloudy"
-	ic = "☁️"
-elsif icon == "partly-cloudy-day"
-	ic = "⛅"
-else
-	icon
+	if icon == "rain" || icon == "light rain"
+		ic = "☔"
+	elsif icon == "cloudy"
+		ic = "☁️"
+	elsif icon == "partly-cloudy-day"
+		ic = "⛅"
+	else
+		icon
+	end
+
+	base_text = [
+		"Сегодня: #{date} #{ic}",
+		"Сейчас: #{t0}°C",
+		"Восход: #{sunrise}",
+		"Закат #{sunset}",
+		"Ветер: #{wind}м/с",
+		"В течение дня: #{t1}°C .. #{t2}°C",
+		"#{summary}"
+	]*"\n"
 end
-
-base_text = [
-	"Сегодня: #{date} #{ic}",
-	"Сейчас: #{t0}°C",
-	"Восход: #{sunrise}",
-	"Закат #{sunset}",
-	"Ветер: #{wind}м/с",
-	"В течение дня: #{t1}°C .. #{t2}°C",
-	"#{summary}"
-]*"\n"
 
 def soccer
 	soccerlive = []
@@ -86,7 +88,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		when "⚽Soccer"
 			bot.api.send_message(chat_id: message.chat.id, text: soccer)
 		when "⛅Weather"
-		 	bot.api.send_message(chat_id: message.chat.id, text: base_text)
+		 	bot.api.send_message(chat_id: message.chat.id, text: weather)
 		when "📰RubyWeekly"
 		 	bot.api.send_message(chat_id: message.chat.id, text: "Скоро тут будут новости про Ruby!")
 		when "🏦Currency"
