@@ -4,6 +4,7 @@ require 'forecast_io'
 require 'rss'
 require 'nokogiri'
 require 'httparty'
+require 'open-uri'
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
@@ -42,7 +43,7 @@ base_text = [
 	"Закат #{sunset}",
 	"Ветер: #{wind}м/с",
 	"#{summary} #{ic}"
-	]*"\n"
+]*"\n"
 
 def soccer
 	soccerlive = []
@@ -53,7 +54,23 @@ def soccer
 	  link = item.link
 	  soccerlive << [title, date, link]
 	end
-	soccerlive
+	soccerlive*"\n"
+end
+
+def currency
+	doc = Nokogiri::XML(open("http://www.cbr.ru/scripts/XML_daily.asp?"))
+	us = doc.at_css('Valute[ID="R01235"]')
+	us_charcode = us.at_css('CharCode').text
+	us_value = us.at_css('Value').text
+	eu = doc.at_css('Valute[ID="R01239"]')
+	eu_charcode = eu.at_css('CharCode').text
+	eu_value = eu.at_css('Value').text
+
+	currency_ex = [
+		"Курсы валют на сегодня:",
+		"🇺🇸 1 #{us_charcode} = #{us_value} RUB",
+		"🇪🇺 1 #{eu_charcode} = #{eu_value} RUB"
+	]*"\n"
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
@@ -64,13 +81,13 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
 		when "⚽Soccer"
-			bot.api.send_message(chat_id: message.chat.id, text: soccer*"\n")
+			bot.api.send_message(chat_id: message.chat.id, text: soccer)
 		when "⛅Weather"
 		 	bot.api.send_message(chat_id: message.chat.id, text: base_text)
 		when "📰RubyWeekly"
 		 	bot.api.send_message(chat_id: message.chat.id, text: "Скоро тут будут новости про Ruby!")
 		when "🏦Currency"
-		 	bot.api.send_message(chat_id: message.chat.id, text: "Скоро тут будут курсы валют!")
+		 	bot.api.send_message(chat_id: message.chat.id, text: currency)
 	  end
 	end
 end
