@@ -8,7 +8,7 @@ require 'open-uri'
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
-user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5'
+@user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5'
 
 def weather
 	ForecastIO.api_key = '3865f8bb801a9ea17907c763534526c0'
@@ -57,10 +57,11 @@ def soccer
 	soccerlive = []
 	soccer_rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
 	soccer_rss.items.each do |item|
+		category = item.category.content
 	 	title = item.title
 	 	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
 	  link = item.link
-	  soccerlive << [title, date, link]
+	  soccerlive << [category, title, date, link]
 	end
 	soccerlive*"\n"
 end
@@ -81,6 +82,23 @@ def currency
 	]*"\n"
 end
 
+def ruby_weekly
+	url = 'http://rubyweekly.com'
+	response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
+	doc = response.css('.sample a').attr('href').text
+	link = url+doc
+	feed = Nokogiri::HTML(open(link))
+	issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
+	ruby_issues = []
+	issues.map { |s|
+		title = s.at_css('div[2]').text
+		main_text = s.at_css('div[3]').text
+		link = s.at_css('a')[:href]
+		ruby_issues << [title, main_text, link]
+	}
+	ruby_issues*"\n"
+end
+
 Telegram::Bot::Client.run(TOKEN) do |bot|
 	bot.listen do |message|
  	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(⚽Soccer ⛅Weather), %w(📰RubyWeekly 🏦Currency)], resize_keyboard: true)
@@ -93,7 +111,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		when "⛅Weather"
 		 	bot.api.send_message(chat_id: message.chat.id, text: weather)
 		when "📰RubyWeekly"
-		 	bot.api.send_message(chat_id: message.chat.id, text: "Скоро тут будут новости про Ruby!")
+		 	bot.api.send_message(chat_id: message.chat.id, text: ruby_weekly)
 		when "🏦Currency"
 		 	bot.api.send_message(chat_id: message.chat.id, text: currency)
 	  end
