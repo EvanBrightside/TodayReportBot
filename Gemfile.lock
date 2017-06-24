@@ -43,7 +43,6 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    yahoo_currency (0.1.0)
 
 PLATFORMS
   ruby
@@ -55,7 +54,6 @@ DEPENDENCIES
   nokogiri
   pry
   telegram-bot-ruby
-  yahoo_currency
 
 BUNDLED WITH
    1.14.6

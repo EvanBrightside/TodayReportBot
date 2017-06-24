@@ -8,22 +8,25 @@ require 'open-uri'
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
+user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5'
+
 def weather
 	ForecastIO.api_key = '3865f8bb801a9ea17907c763534526c0'
 
 	forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', exclude: 'alerts', units: 'auto' })
 
-	weather = forecast.values[6].values[2][0]
+	all_day = forecast[:daily][:data].first
+	currently = forecast[:currently]
 
-	date = Time.at(weather.values[0]).strftime("%d %B %a")
-	summary = weather.values[1]
-	icon = weather.values[2]
-	temperature_now = forecast.values[4].values[5].round
-	temperature_min = weather.values[11].round
-	temperature_max = weather.values[13].round
-	sunrise = Time.at(weather.values[3]).strftime("%H:%M")
-	sunset = Time.at(weather.values[4]).strftime("%H:%M")
-	wind = weather.values[9].round(1)
+	date = Time.at(all_day[:time]).strftime("%d %B %a")
+	summary = all_day[:summary]
+	icon = all_day[:icon]
+	temperature_now = currently[:temperature].round
+	temperature_min = all_day[:temperatureMin].round
+	temperature_max = all_day[:temperatureMax].round
+	sunrise = Time.at(all_day[:sunriseTime]).strftime("%H:%M")
+	sunset = Time.at(all_day[:sunsetTime]).strftime("%H:%M")
+	wind = all_day[:windSpeed].round(1)
 
 	t0 = "+#{temperature_now}" if temperature_now > 0
 	t1 = "+#{temperature_min}" if temperature_min > 0
