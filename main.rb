@@ -63,7 +63,7 @@ def soccer
 	  link = item.link
 	  soccerlive << [category, title, date, link]
 	end
-	soccerlive*"\n"
+	soccerlive.map { |a, s, d, f| [a.upcase, s, d, ["#{f}\n"] ] }*"\n"
 end
 
 def currency
@@ -91,12 +91,12 @@ def ruby_weekly
 	issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
 	ruby_issues = []
 	issues.map { |s|
-		title = s.at_css('div[2]').text
+		title = s.at_css('div[2]').text.upcase
 		main_text = s.at_css('div[3]').text
 		link = s.at_css('a')[:href]
 		ruby_issues << [title, main_text, link]
 	}
-	ruby_issues*"\n"
+	ruby_issues.map { |a, s, d| [a, s, ["#{d}\n"]] }*"\n"
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
