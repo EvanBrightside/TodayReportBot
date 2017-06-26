@@ -54,8 +54,8 @@ def weather
 end
 
 def soccer
-	soccerlive = []
 	soccer_rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
+	soccerlive = []
 	soccer_rss.items.each do |item|
 		category = item.category.content
 	 	title = item.title
