@@ -57,13 +57,13 @@ def soccer
 	soccer_rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
 	soccerlive = []
 	soccer_rss.items.each do |item|
-		category = item.category.content
+		category = item.category.content.upcase
 	 	title = item.title
 	 	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
 	  link = item.link
 	  soccerlive << [category, title, date, link]
 	end
-	soccerlive.map { |a, s, d, f| [a.upcase, s, d, ["#{f}\n"] ] }*"\n"
+	soccerlive.map { |a, s, d, f| [a, s, d, ["#{f}\n"] ] }*"\n"
 end
 
 def currency
