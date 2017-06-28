@@ -66,7 +66,7 @@ def soccer
 		category = "*#{item.category.content.upcase}*"
 	 	title = item.title
 	 	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
-	  link = "[Ссылка на текстовую транслюцию](#{item.link})"
+	  link = "[Ссылка на текстовую трансляцию](#{item.link})"
 	  soccerlive << [category, title, date, link]
 	end
 	s = soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
