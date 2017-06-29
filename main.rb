@@ -69,7 +69,7 @@ def soccer
 	  link = "[Ссылка на текстовую трансляцию](#{item.link})"
 	  soccerlive << [category, title, date, link]
 	end
-	s = soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
+	soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
 end
 
 def currency
@@ -89,20 +89,19 @@ def currency
 end
 
 def rubyweekly
-	url = 'http://rubyweekly.com'
 	response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
 	doc = response.css('.sample a').attr('href').text
-	link = url+doc
+	link = 'http://rubyweekly.com' + doc
 	feed = Nokogiri::HTML(open(link))
 	issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
-	ruby_issues = []
-	issues.map { |s|
-		title = s.at_css('div[2]').text.upcase
+	rubyissues = []
+	issues.map do |s|
+		title = "*#{s.at_css('div[2]').text.upcase}*"
 		main_text = s.at_css('div[3]').text
-		link = s.at_css('a')[:href]
-		ruby_issues << [title, main_text, link]
-	}
-	ruby_issues.map { |a, s, d| [ a, s, ["#{d}\n"]] }*"\n"
+		link = "[link](#{s.at_css('a')[:href]})"
+		rubyissues << [title, main_text, link]
+	end
+	rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
@@ -112,12 +111,12 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 		case message.text
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
+		when "📰RubyWeekly"
+			bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
 		when "⚽Soccer"
 			bot.api.send_message(chat_id: message.chat.id, text: soccer, parse_mode: 'Markdown', disable_web_page_preview: true)
 		when "⛅Weather"
 		 	bot.api.send_message(chat_id: message.chat.id, text: weather, parse_mode: 'Markdown')
-		when "📰RubyWeekly"
-		 	bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, disable_web_page_preview: true)
 		when "🏦Currency"
 		 	bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
 	  end
