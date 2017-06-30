@@ -59,7 +59,31 @@ def weather
 	]*"\n"
 end
 
-def soccer
+def dailynews
+	items = Nokogiri::XML(open('https://meduza.io/rss/all'))
+	dailynews = []
+	items.css('item')[0..8].map do |item|
+		title = "*#{item.at_css('title').children[1].text.upcase}*"
+		description = item.at_css('description').children[1].text
+		link = "[Полная статья](#{item.at_css('link').text})"
+		dailynews << [title, description, link]
+	end
+	dailynews.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
+end
+
+def devby
+	items = Nokogiri::XML(open('https://dev.by/rss'))
+	devby = []
+	items.css('item')[0..8].map do |item|
+		title = "*#{item.at_css('title').text.upcase}*"
+		description = item.at_css('description').children[1].text.gsub(/\<(.*?)\>/, '').gsub(/&nbsp;/i,"")
+		link = "[Полная статья](#{item.at_css('link').text})"
+		devby << [title, description, link]
+	end
+	devby.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
+end
+
+def live
 	soccer_rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
 	soccerlive = []
 	soccer_rss.items.each do |item|
@@ -70,6 +94,32 @@ def soccer
 	  soccerlive << [category, title, date, link]
 	end
 	soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
+end
+
+def transfers
+	transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/')
+	transfers = []
+	transfers_rss.items[0..10].each do |item|
+		title = "*#{item.title}*"
+		description = item.description
+		link = "[Полная статья](#{item.link})"
+		transfers << [title, description, link]
+	end
+	transfers.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
+end
+
+def allsport
+	rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/se/')
+	allsport_rss = rss.items.select { |a| a.category.content != "Футбол - Трансферы"}
+	allsport = []
+	allsport_rss[0..10].each do |item|
+		category = "*#{item.category.content.upcase}*"
+		title = "_#{item.title}_"
+		description = item.description
+		link = "[Полная статья](#{item.link})"
+		allsport << [category, title, description, link]
+	end
+	allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
 end
 
 def currency
@@ -106,15 +156,33 @@ end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
 	bot.listen do |message|
- 	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(⚽Soccer ⛅Weather), %w(📰RubyWeekly 🏦Currency)], resize_keyboard: true)
+ 	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], resize_keyboard: true)
+
+ 	  sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(🔀Transfers ⬅️Back)], resize_keyboard: true)
+
+ 	  news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(DailyNews DevBY), %w(RubyWeekly ⬅️Back)], resize_keyboard: true)
 
 		case message.text
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
-		when "📰RubyWeekly"
+		when "📰News"
+			bot.api.send_message(chat_id: message.chat.id, text: "Main News!", reply_markup: news_kb)
+		when "RubyWeekly"
 			bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
-		when "⚽Soccer"
-			bot.api.send_message(chat_id: message.chat.id, text: soccer, parse_mode: 'Markdown', disable_web_page_preview: true)
+		when "DevBY"
+			bot.api.send_message(chat_id: message.chat.id, text: devby, parse_mode: 'Markdown', disable_web_page_preview: true)
+		when "DailyNews"
+			bot.api.send_message(chat_id: message.chat.id, text: dailynews, parse_mode: 'Markdown', disable_web_page_preview: true)
+		when "🏟Sport"
+			bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
+		when "⚽Live"
+			bot.api.send_message(chat_id: message.chat.id, text: live, parse_mode: 'Markdown', disable_web_page_preview: true)
+		when "🔀Transfers"
+			bot.api.send_message(chat_id: message.chat.id, text: transfers, parse_mode: 'Markdown', disable_web_page_preview: true)
+		when "📺AllSport"
+			bot.api.send_message(chat_id: message.chat.id, text: allsport, parse_mode: 'Markdown', disable_web_page_preview: true)
+		when "⬅️Back"
+			bot.api.send_message(chat_id: message.chat.id, text: "Back to main menu", reply_markup: markup)
 		when "⛅Weather"
 		 	bot.api.send_message(chat_id: message.chat.id, text: weather, parse_mode: 'Markdown')
 		when "🏦Currency"
