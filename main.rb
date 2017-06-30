@@ -76,7 +76,7 @@ def devby
 	devby = []
 	items.css('item')[0..8].map do |item|
 		title = "*#{item.at_css('title').text.upcase}*"
-		description = item.at_css('description').children[1].text.gsub(/\<(.*?)\>/, '').gsub(/&nbsp;/i,"")
+		description = item.at_css('description').children[1].text.gsub(/\<(.*?)\>/i,"").gsub(/&nbsp;|&laquo;|&raquo;/i," ").split("\n")[0]
 		link = "[Полная статья](#{item.at_css('link').text})"
 		devby << [title, description, link]
 	end
@@ -160,18 +160,18 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
  	  sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(🔀Transfers ⬅️Back)], resize_keyboard: true)
 
- 	  news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(DailyNews DevBY), %w(RubyWeekly ⬅️Back)], resize_keyboard: true)
+ 	  news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(💎RubyWeekly ⬅️Back)], resize_keyboard: true)
 
 		case message.text
 		when "/start"
 			bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
 		when "📰News"
-			bot.api.send_message(chat_id: message.chat.id, text: "Main News!", reply_markup: news_kb)
-		when "RubyWeekly"
+			bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
+		when "💎RubyWeekly"
 			bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
-		when "DevBY"
+		when "👨🏽‍💻DevBY"
 			bot.api.send_message(chat_id: message.chat.id, text: devby, parse_mode: 'Markdown', disable_web_page_preview: true)
-		when "DailyNews"
+		when "🎙DailyNews"
 			bot.api.send_message(chat_id: message.chat.id, text: dailynews, parse_mode: 'Markdown', disable_web_page_preview: true)
 		when "🏟Sport"
 			bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
