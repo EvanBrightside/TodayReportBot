@@ -62,7 +62,7 @@ end
 def dailynews
 	items = Nokogiri::XML(open('https://meduza.io/rss/all'))
 	dailynews = []
-	items.css('item')[0..8].map do |item|
+	items.css('item')[0..5].map do |item|
 		title = "*#{item.at_css('title').children[1].text.upcase}*"
 		description = item.at_css('description').children[1].text
 		link = "[Полная статья](#{item.at_css('link').text})"
@@ -76,7 +76,7 @@ def devby
 	devby = []
 	items.css('item')[0..8].map do |item|
 		title = "*#{item.at_css('title').text.upcase}*"
-		description = item.at_css('description').children[1].text.gsub(/\<(.*?)\>|&mdash;/i,"").gsub(/&nbsp;|&laquo;|&raquo;/i," ").split("\n")[0]
+		description = item.at_css('description').children[1].text.gsub(/\<(.*?)\>|&mdash;|&#8203;/i,"").gsub(/&nbsp;|&laquo;|&raquo;/i," ").split("\n")[0]
 		link = "[Полная статья](#{item.at_css('link').text})"
 		devby << [title, description, link]
 	end
