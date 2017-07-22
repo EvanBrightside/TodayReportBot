@@ -13,10 +13,7 @@ TOKEN = "417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo"
 
 def weather
 	ForecastIO.api_key = '3865f8bb801a9ea17907c763534526c0'
-	#binding.pry
 	forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', exclude: 'alerts', units: 'auto' })
-	#message.location.latitude, message.location.longitude
-	#
 	all_day = forecast[:daily][:data].first
 	currently = forecast[:currently]
 
@@ -88,7 +85,7 @@ end
 def live
   rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
   liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира }.join('|')
-	soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ }
+	soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
   soccerlive = []
   soccer_rss.each do |item|
     category = "*#{item.category.content.upcase}*"
