@@ -5,6 +5,7 @@ require 'rss'
 require 'nokogiri'
 require 'httparty'
 require 'open-uri'
+require 'mongo'
 
 TOKEN = "417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo"
 
@@ -12,9 +13,10 @@ TOKEN = "417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo"
 
 def weather
 	ForecastIO.api_key = '3865f8bb801a9ea17907c763534526c0'
-
+	#binding.pry
 	forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', exclude: 'alerts', units: 'auto' })
-
+	#message.location.latitude, message.location.longitude
+	#
 	all_day = forecast[:daily][:data].first
 	currently = forecast[:currently]
 
@@ -84,16 +86,18 @@ def devby
 end
 
 def live
-	soccer_rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
-	soccerlive = []
-	soccer_rss.items.each do |item|
-		category = "*#{item.category.content.upcase}*"
-	 	title = item.title
-	 	date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
-	  link = "[Ссылка на текстовую трансляцию](#{item.link})"
-	  soccerlive << [category, title, date, link]
-	end
-	soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
+  rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
+  liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира }.join('|')
+	soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ }
+  soccerlive = []
+  soccer_rss.each do |item|
+    category = "*#{item.category.content.upcase}*"
+    title = item.title
+    date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
+    link = "[Ссылка на текстовую трансляцию](#{item.link})"
+    soccerlive << [category, title, date, link]
+  end
+  soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
 end
 
 def transfers
@@ -156,7 +160,7 @@ end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
 	bot.listen do |message|
- 	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], resize_keyboard: true)
+ 	  markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], request_location: true, resize_keyboard: true)
 
  	  sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(🔀Transfers ⬅️Back)], resize_keyboard: true)
 
