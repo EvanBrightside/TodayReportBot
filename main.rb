@@ -59,7 +59,7 @@ def weather
 end
 
 def dailynews
-	items = Nokogiri::XML(open('https://meduza.io/rss/all'))
+	items = Nokogiri::XML(open('https://meduza.io/rss/all', {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
 	dailynews = []
 	items.css('item')[0..5].map do |item|
 		title = "*#{item.at_css('title').children[1].text.upcase}*"
@@ -71,9 +71,9 @@ def dailynews
 end
 
 def devby
-	items = Nokogiri::XML(open('https://dev.by/rss'))
+	items = Nokogiri::XML(open('https://dev.by/rss', {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
 	devby = []
-	items.css('item')[0..8].map do |item|
+	items.css('item')[0..5].map do |item|
 		title = "*#{item.at_css('title').text.upcase}*"
 		description = item.at_css('description').children[1].text.gsub(/\<(.*?)\>|&mdash;|&#8203;/i,"").gsub(/&nbsp;|&laquo;|&raquo;/i," ").split("\n")[0]
 		link = "[Полная статья](#{item.at_css('link').text})"
@@ -124,7 +124,7 @@ def allsport
 end
 
 def currency
-	doc = Nokogiri::XML(open("http://www.cbr.ru/scripts/XML_daily.asp?"))
+	doc = Nokogiri::XML(open("http://www.cbr.ru/scripts/XML_daily.asp?", {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
 	us = doc.at_css('Valute[ID="R01235"]')
 	us_charcode = us.at_css('CharCode').text
 	us_value = us.at_css('Value').text
