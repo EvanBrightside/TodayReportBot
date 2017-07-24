@@ -57,7 +57,7 @@ DEPENDENCIES
   i18n
   mongo (~> 2.4)
   nokogiri
-  openssl (~> 2.0.2)
+  openssl
   pry
   telegram-bot-ruby
 
