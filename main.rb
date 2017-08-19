@@ -146,13 +146,14 @@ def rubyweekly
 	feed = Nokogiri::HTML(open(link))
 	issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
 	rubyissues = []
-	issues.map do |s|
-		title = "*#{s.at_css('div[2]').text.upcase}*"
-		main_text = s.at_css('div[3]').text
-		link = "[link](#{s.at_css('a')[:href]})"
-		rubyissues << [title, main_text, link]
-	end
-	rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
+	# issues.map do |s|
+	# 	title = "*#{s.at_css('div[2]').text.upcase}*"
+	# 	main_text = s.at_css('div[3]').text
+	# 	link = "[link](#{s.at_css('a')[:href]})"
+	# 	rubyissues << [title, main_text, link]
+	# end
+	# rubyissues.map { |a, s, d| [ a, s, d["#{d}\n"] ] }*"\n"
+	"NO news for today"
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
