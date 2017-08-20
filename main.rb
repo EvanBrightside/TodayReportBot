@@ -63,7 +63,7 @@ def dailynews
 	dailynews = []
 	items.css('item')[0..5].map do |item|
 		title = "*#{item.at_css('title').text.upcase}*"
-		description = item.at_css('description').text
+		description = "`#{item.at_css('description').text}`"
 		link = "[Полная статья](#{item.at_css('link').text})"
 		dailynews << [title, description, link]
 	end
@@ -75,7 +75,7 @@ def devby
 	devby = []
 	items.css('item')[0..5].map do |item|
 		title = "*#{item.at_css('title').text.upcase}*"
-		description = item.at_css('description').children[1].text.gsub(/\<(.*?)\>|&mdash;|&#8203;/i,"").gsub(/&nbsp;|&laquo;|&raquo;/i," ").split("\n")[0]
+		description = "`#{item.at_css('description').children[1].text.gsub(/\<(.*?)\>|&mdash;|&#8203;/i,"").gsub(/&nbsp;|&laquo;|&raquo;/i," ").split("\n")[0]}`"
 		link = "[Полная статья](#{item.at_css('link').text})"
 		devby << [title, description, link]
 	end
@@ -89,8 +89,8 @@ def live
   soccerlive = []
   soccer_rss.each do |item|
     category = "*#{item.category.content.upcase}*"
-    title = item.title
-    date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
+    title = "`#{item.title}`"
+    date = "`#{item.pubDate.strftime("%d/%m/%Y - %H:%M")}`"
     link = "[Ссылка на текстовую трансляцию](#{item.link})"
     soccerlive << [category, title, date, link]
   end
@@ -102,7 +102,7 @@ def transfers
 	transfers = []
 	transfers_rss.items[0..10].each do |item|
 		title = "*#{item.title}*"
-		description = item.description
+		description = "`#{item.description}`"
 		link = "[Полная статья](#{item.link})"
 		transfers << [title, description, link]
 	end
@@ -116,7 +116,7 @@ def allsport
 	allsport_rss[0..10].each do |item|
 		category = "*#{item.category.content.upcase}*"
 		title = "_#{item.title}_"
-		description = item.description
+		description = "`#{item.description}`"
 		link = "[Полная статья](#{item.link})"
 		allsport << [category, title, description, link]
 	end
@@ -143,17 +143,16 @@ def rubyweekly
 	response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
 	doc = response.css('.sample a').attr('href').text
 	link = 'http://rubyweekly.com' + doc
-	feed = Nokogiri::HTML(open(link))
+	feed = Nokogiri::XML(open(link, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
 	issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
 	rubyissues = []
-	# issues.map do |s|
-	# 	title = "*#{s.at_css('div[2]').text.upcase}*"
-	# 	main_text = s.at_css('div[3]').text
-	# 	link = "[link](#{s.at_css('a')[:href]})"
-	# 	rubyissues << [title, main_text, link]
-	# end
-	# rubyissues.map { |a, s, d| [ a, s, d["#{d}\n"] ] }*"\n"
-	"NO news for today"
+	issues.map do |s|
+		title = "*#{s.at_css('div[2]').text.upcase}*"
+		main_text = "`#{s.at_css('div[3]').text}`"
+		link = "[link](#{s.at_css('a')[:href]})"
+		rubyissues << [title, main_text, link]
+	end
+	rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
@@ -192,3 +191,4 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 	  end
 	end
 end
+
