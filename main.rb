@@ -3,9 +3,9 @@ require 'pry'
 require 'forecast_io'
 require 'rss'
 require 'nokogiri'
+require 'httparty'
 require 'open-uri'
 require 'mongo'
-require 'httparty'
 
 TOKEN = "417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo"
 
