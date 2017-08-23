@@ -3,9 +3,9 @@ require 'pry'
 require 'forecast_io'
 require 'rss'
 require 'nokogiri'
-require 'httparty'
 require 'open-uri'
 require 'mongo'
+require 'httparty'
 
 TOKEN = "417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo"
 
@@ -87,7 +87,7 @@ def live
   liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира }.join('|')
 	soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
   soccerlive = []
-  soccer_rss.each do |item|
+  soccer_rss[0..20].each do |item|
     category = "*#{item.category.content.upcase}*"
     title = "`#{item.title}`"
     date = "`#{item.pubDate.strftime("%d/%m/%Y - %H:%M")}`"
