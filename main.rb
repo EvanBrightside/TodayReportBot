@@ -83,18 +83,19 @@ def devby
 end
 
 def live
-  rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
-  liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира }.join('|')
-	soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
-  soccerlive = []
-  soccer_rss[0..10].each do |item|
-    category = "*#{item.category.content.upcase}*"
-    title = "`#{item.title}`"
-    date = "`#{item.pubDate.strftime("%d/%m/%Y - %H:%M")}`"
-    link = "[Ссылка на текстовую трансляцию](#{item.link})"
-    soccerlive << [category, title, date, link]
-  end
-  soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
+ #  rss = RSS::Parser.parse('https://www.liveresult.ru/football/txt/rss')
+ #  liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира }.join('|')
+	# soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
+ #  soccerlive = []
+ #  soccer_rss.each do |item|
+ #    category = "*#{item.category.content.upcase}*"
+ #    title = "`#{item.title}`"
+ #    date = "`#{item.pubDate.strftime("%d/%m/%Y - %H:%M")}`"
+ #    link = "[Ссылка на текстовую трансляцию](#{item.link})"
+ #    soccerlive << [category, title, date, link]
+ #  end
+ #  soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
+ "live sleep for today"
 end
 
 def transfers
