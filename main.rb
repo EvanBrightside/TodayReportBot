@@ -87,7 +87,7 @@ def live
   liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира }.join('|')
 	soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
   soccerlive = []
-  soccer_rss[0..20].each do |item|
+  soccer_rss.each do |item|
     category = "*#{item.category.content.upcase}*"
     title = "`#{item.title}`"
     date = "`#{item.pubDate.strftime("%d/%m/%Y - %H:%M")}`"
