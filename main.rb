@@ -116,7 +116,7 @@ def transfers
   #   transfers << [title, description, link]
   # end
 
-  transfers_rss = Nokogiri::XML(open('http://www.sport-express.ru/services/materials/news/transfers/se/', {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
+  transfers_rss = Nokogiri::XML(open('http://www.sport-express.ru/services/materials/news/transfers/se/', {ssl_verify_mode: OpenSSL::SSL::VERIFY_PEER}))
   transfers = []
   transfers_rss.css('item')[0..10].map do |item|
     title = "*#{item.at_css('title').text.upcase}*"
