@@ -142,9 +142,10 @@ def allsport
   #   end
   #   allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n "
   # else
-    sp_url = 'https://youtu.be/ww4pgZWOkqY'
-    Launchy.open sp_url
-    "Spartak! #{sp_url}"
+    # sp_url = 'https://youtu.be/ww4pgZWOkqY'
+    # Launchy.open sp_url
+    # "Spartak! #{sp_url}"
+    "Spartak!"
   # end
 end
 
