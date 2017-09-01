@@ -107,23 +107,23 @@ def live
 end
 
 def transfers
-  # transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/')
-  # transfers = []
-  # transfers_rss.items[0..10].each do |item|
-  #   title = "*#{item.title}*"
-  #   description = "`#{item.description}`"
-  #   link = "[Полная статья](#{item.link})"
-  #   transfers << [title, description, link]
-  # end
-
-  transfers_rss = Nokogiri::XML(open('http://www.sport-express.ru/services/materials/news/transfers/se/', {ssl_verify_mode: OpenSSL::SSL::VERIFY_PEER}))
+  transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/', false)
   transfers = []
-  transfers_rss.css('item')[0..10].map do |item|
-    title = "*#{item.at_css('title').text.upcase}*"
-    description = "`#{item.at_css('description').text}`"
-    link = "[Полная статья](#{item.at_css('link').text})"
+  transfers_rss.items[0..10].each do |item|
+    title = "*#{item.title}*"
+    description = "`#{item.description}`"
+    link = "[Полная статья](#{item.link})"
     transfers << [title, description, link]
   end
+
+  # transfers_rss = Nokogiri::XML(open('http://www.sport-express.ru/services/materials/news/transfers/se/', {ssl_verify_mode: OpenSSL::SSL::VERIFY_PEER}))
+  # transfers = []
+  # transfers_rss.css('item')[0..10].map do |item|
+  #   title = "*#{item.at_css('title').text.upcase}*"
+  #   description = "`#{item.at_css('description').text}`"
+  #   link = "[Полная статья](#{item.at_css('link').text})"
+  #   transfers << [title, description, link]
+  # end
   transfers.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n "
 end
 
