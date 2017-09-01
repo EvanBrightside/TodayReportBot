@@ -107,36 +107,45 @@ def live
 end
 
 def transfers
-  transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/')
+  # transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/')
+  # transfers = []
+  # transfers_rss.items[0..10].each do |item|
+  #   title = "*#{item.title}*"
+  #   description = "`#{item.description}`"
+  #   link = "[Полная статья](#{item.link})"
+  #   transfers << [title, description, link]
+  # end
+
+  transfers_rss = Nokogiri::XML(open('http://www.sport-express.ru/services/materials/news/transfers/se/', {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
   transfers = []
-  transfers_rss.items[0..10].each do |item|
-    title = "*#{item.title}*"
-    description = "`#{item.description}`"
-    link = "[Полная статья](#{item.link})"
+  transfers_rss.css('item')[0..10].map do |item|
+    title = "*#{item.at_css('title').text.upcase}*"
+    description = "`#{item.at_css('description').text}`"
+    link = "[Полная статья](#{item.at_css('link').text})"
     transfers << [title, description, link]
   end
   transfers.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n "
 end
 
 def allsport
-  url = 'http://www.sport-express.ru/services/materials/news/se/'
-  if HTTParty.get(url).code == 200
-    rss = RSS::Parser.parse(url)
-    allsport_rss = rss.items.select { |a| a.category.content != "Футбол - Трансферы"}
-    allsport = []
-    allsport_rss[0..10].each do |item|
-      category = "*#{item.category.content.upcase}*"
-      title = "_#{item.title}_"
-      description = "`#{item.description}`"
-      link = "[Полная статья](#{item.link})"
-      allsport << [category, title, description, link]
-    end
-    allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n "
-  else
+  # url = 'http://www.sport-express.ru/services/materials/news/se/'
+  # if HTTParty.get(url).code == 200
+  #   rss = RSS::Parser.parse(url)
+  #   allsport_rss = rss.items.select { |a| a.category.content != "Футбол - Трансферы"}
+  #   allsport = []
+  #   allsport_rss[0..10].each do |item|
+  #     category = "*#{item.category.content.upcase}*"
+  #     title = "_#{item.title}_"
+  #     description = "`#{item.description}`"
+  #     link = "[Полная статья](#{item.link})"
+  #     allsport << [category, title, description, link]
+  #   end
+  #   allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n "
+  # else
     sp_url = 'https://youtu.be/ww4pgZWOkqY'
     Launchy.open sp_url
     "Spartak! #{sp_url}"
-  end
+  # end
 end
 
 def currency
