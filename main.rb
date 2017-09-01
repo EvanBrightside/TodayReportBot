@@ -115,7 +115,7 @@ def transfers
     link = "[Полная статья](#{item.link})"
     transfers << [title, description, link]
   end
-  transfers.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
+  transfers.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n "
 end
 
 def allsport
