@@ -123,7 +123,7 @@ end
 
 def allsport
   begin
-    url = 'http://www.sport-express.ru/services/materials/news/se/asassx'
+    url = 'http://www.sport-express.ru/services/materials/news/se/'
     if HTTParty.get(url).code == 200
       rss = RSS::Parser.parse(url)
       allsport_rss = rss.items.select { |a| a.category.content != "Футбол - Трансферы"}
@@ -141,9 +141,8 @@ def allsport
       # Launchy.open sp_url
       "Spartak! #{sp_url}"
     end
-  rescue
-    puts "Ошибочка: #{$!.inspect}"
-    raise "I'm Batman!"
+  rescue Telegram::Bot::Exceptions::ResponseError => e
+    puts 'telegram stuff, nothing to worry!'
   end
 end
 
