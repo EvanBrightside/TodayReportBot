@@ -100,7 +100,7 @@ def live
     soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n "
   else
     sp_url = 'https://youtu.be/ww4pgZWOkqY'
-    Launchy.open sp_url
+    # Launchy.open sp_url
     "Spartak! #{sp_url}"
   end
   #  "Not avaliable now"
@@ -134,10 +134,10 @@ def allsport
       link = "[Полная статья](#{item.link})"
       allsport << [category, title, description, link]
     end
-    allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n "
+    allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n "] ] }*"\n"
   else
     sp_url = 'https://youtu.be/ww4pgZWOkqY'
-    Launchy.open sp_url
+    # Launchy.open sp_url
     "Spartak! #{sp_url}"
   end
 end
