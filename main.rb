@@ -87,6 +87,7 @@ def live
   begin
     url = 'https://www.liveresult.ru/football/txt/rss'
     if HTTParty.get(url).code == 200
+      # begin
       rss = RSS::Parser.parse(url)
       liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
       soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
@@ -98,15 +99,17 @@ def live
         link = "[Ссылка на текстовую трансляцию](#{item.link})"
         soccerlive << [category, title, date, link]
       end
-      soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n "] ] }*"\n"
+      live = soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
+      live
     else
       sp_url = 'https://youtu.be/ww4pgZWOkqY'
-      # Launchy.open sp_url
+      #Launchy.open sp_url
       "Spartak! #{sp_url}"
     end
-    #  "Not avaliable now"
+  #    "Not avaliable now"
   rescue
   end
+  # "haha"
 end
 
 def transfers
@@ -138,13 +141,14 @@ def allsport
         link = "[Полная статья](#{item.link})"
         allsport << [category, title, description, link]
       end
-      allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n "] ] }*"\n"
+      sport = allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n "] ] }*"\n"
+      sport
     else
       sp_url = 'https://youtu.be/ww4pgZWOkqY'
       # Launchy.open sp_url
       "Spartak! #{sp_url}"
     end
-  rescue Telegram::Bot::Exceptions::ResponseError => e
+  rescue => e
     puts 'telegram stuff, nothing to worry!'
   end
 end
