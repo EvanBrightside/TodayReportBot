@@ -87,7 +87,6 @@ def live
   begin
     url = 'https://www.liveresult.ru/football/txt/rss'
     if HTTParty.get(url).code == 200
-      # begin
       rss = RSS::Parser.parse(url)
       liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
       soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
@@ -108,6 +107,7 @@ def live
     end
   #    "Not avaliable now"
   rescue
+    'Not avaliable now / telegram stuff, nothing to worry!'
   end
   # "haha"
 end
@@ -148,8 +148,8 @@ def allsport
       # Launchy.open sp_url
       "Spartak! #{sp_url}"
     end
-  rescue => e
-    puts 'telegram stuff, nothing to worry!'
+  rescue
+    'Not avaliable now / telegram stuff, nothing to worry!'
   end
 end
 
