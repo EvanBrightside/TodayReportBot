@@ -84,33 +84,29 @@ def devby
 end
 
 def live
-  begin
-    url = 'https://www.liveresult.ru/football/txt/rss'
-    if HTTParty.get(url).code == 200
-      rss = RSS::Parser.parse(url)
-      liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
-      soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
-      soccerlive = []
-      soccer_rss.each do |item|
-        category = "*#{item.category.content.upcase}*"
-        title = "`#{item.title}`"
-        date = "`#{item.pubDate.strftime("%d/%m/%Y - %H:%M")}`"
-        link = "[Ссылка на текстовую трансляцию](#{item.link})"
-        soccerlive << [category, title, date, link]
-      end
-      live = soccerlive.map { |a, s, d, f| [ a, s, d, ["#{f}\n"] ] }*"\n"
-      live
-    else
-      sp_url = 'https://youtu.be/ww4pgZWOkqY'
-      #Launchy.open sp_url
-      "Spartak! #{sp_url}"
+  url = 'https://www.liveresult.ru/football/txt/rss'
+  if HTTParty.get(url).code == 200
+    rss = RSS::Parser.parse(url)
+    liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
+    soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ }
+    soccerlive = []
+    soccer_rss.each do |item|
+      category = item.category.content.upcase
+      title = item.title
+      date = item.pubDate.strftime("%d/%m/%Y - %H:%M")
+      link = "[Ссылка на текстовую трансляцию](#{item.link})"
+      soccerlive << [category, title, date, link]
     end
-  #    "Not avaliable now"
-  rescue
-    'Not avaliable now / telegram stuff, nothing to worry!'
+    live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+  else
+    sp_url = 'https://youtu.be/ww4pgZWOkqY'
+    #Launchy.open sp_url
+    "Spartak! #{sp_url}"
   end
-  # "haha"
+  rescue => e
+    'Not avaliable now / telegram stuff, nothing to worry!'
 end
+# .select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
 
 def transfers
   # transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/')
