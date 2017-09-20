@@ -97,8 +97,6 @@ def live
       link = "[Ссылка на текстовую трансляцию](#{item.link})"
       soccerlive << [category, title, date, link]
     end
-    rescue => e
-    'Not avaliable now / telegram stuff, nothing to worry!'
     live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
   else
     sp_url = 'https://youtu.be/ww4pgZWOkqY'
