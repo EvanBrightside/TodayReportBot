@@ -158,10 +158,22 @@ def currency
   eu_charcode = eu.at_css('CharCode').text
   eu_value = eu.at_css('Value').text
 
+  bitcoin_url = 'https://api.coinmarketcap.com/v1/ticker/bitcoin/'
+  bitcoin_response = HTTParty.get(bitcoin_url)
+  bitcoin_h = bitcoin_response.parsed_response.first
+  usd_bt = bitcoin_h["price_usd"]
+
+  ethereum_url = 'https://api.coinmarketcap.com/v1/ticker/ethereum/'
+  ethereum_response = HTTParty.get(ethereum_url)
+  ethereum_h = ethereum_response.parsed_response.first
+  usd_et = ethereum_h["price_usd"]
+
   currency_ex = [
     "*Курсы валют на сегодня:*",
     "🇺🇸 1 #{us_charcode} = #{us_value} RUB",
-    "🇪🇺 1 #{eu_charcode} = #{eu_value} RUB"
+    "🇪🇺 1 #{eu_charcode} = #{eu_value} RUB",
+    "Bitcoint = #{usd_bt} USD",
+    "Ethereum = #{usd_et} USD"
   ]*"\n"
 end
 
