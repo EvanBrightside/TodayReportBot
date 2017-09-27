@@ -172,8 +172,8 @@ def currency
     "*Курсы валют на сегодня:*",
     "🇺🇸 1 #{us_charcode} = #{us_value} RUB",
     "🇪🇺 1 #{eu_charcode} = #{eu_value} RUB",
-    "Bitcoin = #{usd_bt} USD",
-    "Ethereum = #{usd_et} USD"
+    "🔶 1 Bitcoin = #{usd_bt} USD",
+    "🔷 1 Ethereum = #{usd_et} USD"
   ]*"\n"
 end
 
