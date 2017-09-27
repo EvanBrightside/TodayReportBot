@@ -88,8 +88,8 @@ def live
   if HTTParty.get(url).code == 200
     rss = RSS::Parser.parse(url)
     liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
-    soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
-    soccerlive = []
+    soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ }
+    soccerlive = [] unless soccer_rss.empty?
     soccer_rss.each do |item|
       category = item.category.content.upcase
       title = item.title
@@ -97,7 +97,7 @@ def live
       link = "[Ссылка на текстовую трансляцию](#{item.link})"
       soccerlive << [category, title, date, link]
     end
-    live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n" if soccer_rss.present
+    live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
   else
     sp_url = 'https://youtu.be/ww4pgZWOkqY'
     #Launchy.open sp_url
