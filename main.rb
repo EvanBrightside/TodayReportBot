@@ -97,14 +97,14 @@ def live
       link = "[Ссылка на текстовую трансляцию](#{item.link})"
       soccerlive << [category, title, date, link]
     end
-    live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n" if soccer_rss.present
   else
     sp_url = 'https://youtu.be/ww4pgZWOkqY'
     #Launchy.open sp_url
     "Spartak! #{sp_url}"
   end
   rescue => e
-    'Not avaliable now / telegram stuff, nothing to worry!'
+    'There are no `live` list for today now, we will update it soon!'
 end
 # .select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
 
@@ -172,7 +172,7 @@ def currency
     "*Курсы валют на сегодня:*",
     "🇺🇸 1 #{us_charcode} = #{us_value} RUB",
     "🇪🇺 1 #{eu_charcode} = #{eu_value} RUB",
-    "Bitcoint = #{usd_bt} USD",
+    "Bitcoin = #{usd_bt} USD",
     "Ethereum = #{usd_et} USD"
   ]*"\n"
 end
