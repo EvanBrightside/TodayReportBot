@@ -88,7 +88,7 @@ def live
   if HTTParty.get(url).code == 200
     rss = RSS::Parser.parse(url)
     liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
-    soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ }
+    soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y")}
     soccerlive = [] unless soccer_rss.empty?
     soccer_rss.each do |item|
       category = item.category.content.upcase
