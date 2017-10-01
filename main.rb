@@ -87,7 +87,7 @@ def live
   url = 'https://www.liveresult.ru/football/txt/rss'
   if HTTParty.get(url).code == 200
     rss = RSS::Parser.parse(url)
-    liga = %w{ Россия Италия Англия Германия Испания Франция США Аргентина Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
+    liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
     soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y")}
     binding.pry
     soccerlive = [] unless soccer_rss.empty?
