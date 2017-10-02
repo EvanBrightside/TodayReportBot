@@ -105,7 +105,7 @@ def live
     "Spartak! #{sp_url}"
   end
   rescue => e
-    'There are no `live` list for today now, we will update it soon!'
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://www.liveresult.ru/'}"
 end
 # .select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
 
