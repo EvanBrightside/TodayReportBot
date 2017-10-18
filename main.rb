@@ -180,7 +180,7 @@ end
 
 def rubyweekly
   response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
-  doc = response.css('.sample a').attr('href').text
+  doc = response.css('.main p a').attr('href').text
   link = 'http://rubyweekly.com' + doc
   feed = Nokogiri::XML(open(link, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
   issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
@@ -192,6 +192,8 @@ def rubyweekly
     rubyissues << [title, main_text, link]
   end
   rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
+  rescue => e
+    "Something wrong / You can check it on #{'https://rubyweekly.com/'}"
 end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
