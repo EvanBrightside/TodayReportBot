@@ -28,9 +28,9 @@ def weather
   sunset = Time.at(all_day[:sunsetTime]).strftime("%H:%M")
   wind = all_day[:windSpeed].round(1)
 
-  t0 = "+#{temperature_now}" if temperature_now > 0
-  t1 = "+#{temperature_min}" if temperature_min > 0
-  t2 = "+#{temperature_max}" if temperature_max > 0
+  t0 = temperature_now > 0 ? "+#{temperature_now}" : "#{temperature_now}"
+  t1 = temperature_min > 0 ? "+#{temperature_min}" : "#{temperature_min}"
+  t2 = temperature_max > 0 ? "+#{temperature_max}" : "#{temperature_max}"
 
   if icon == "rain" || icon == "light rain"
     ic = "☔"
@@ -169,12 +169,18 @@ def currency
   ethereum_h = ethereum_response.parsed_response.first
   usd_et = ethereum_h["price_usd"]
 
+  ripple_url = 'https://api.coinmarketcap.com/v1/ticker/ripple/'
+  ripple_response = HTTParty.get(ripple_url)
+  ripple_h = ripple_response.parsed_response.first
+  usd_rp = ripple_h["price_usd"]
+
   currency_ex = [
     "*Курсы валют на сегодня:*",
     "🇺🇸 1 #{us_charcode} = #{us_value} RUB",
     "🇪🇺 1 #{eu_charcode} = #{eu_value} RUB",
     "🔶 1 BTC = #{usd_bt} USD",
-    "🔷 1 ETH = #{usd_et} USD"
+    "🔷 1 ETH = #{usd_et} USD",
+    "◼️ 1 XRP = #{usd_rp} USD"
   ]*"\n"
 end
 
