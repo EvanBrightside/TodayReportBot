@@ -235,6 +235,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
       if File.readlines('tmp/users.txt').grep(/"#{arr.first}"/).size == 0
         File.open('tmp/users.txt', 'a') {|f| f << "\n#{arr}"}
+        File.open('log/users.txt', 'a') {|f| f << "\n#{arr}"}
       end
       bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
     when "⚽Live"
@@ -252,6 +253,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
       if File.readlines('tmp/users.txt').grep(/"#{arr.first}"/).size == 0
         File.open('tmp/users.txt', 'a') {|f| f << "\n#{arr}"}
+        File.open('log/customers.csv', 'a') {|f| f << "\n#{arr}"}
       end
       bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
     end
