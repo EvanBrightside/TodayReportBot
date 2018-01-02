@@ -89,7 +89,6 @@ def live
     rss = RSS::Parser.parse(url)
     liga = %w{ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018}.join('|')
     soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y")}
-    binding.pry
     soccerlive = [] unless soccer_rss.empty?
     soccer_rss.each do |item|
       category = item.category.content.upcase
@@ -212,9 +211,23 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
   case message.text
     when "/start"
-      bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
+      arr = ["#{message.from.id}", "#{message.from.first_name}", "#{message.from.last_name}"]
+
+      if File.readlines("users.txt").grep(/"#{arr.first}"/).size > 0
+        bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
+      else
+        File.open('users.txt', 'a') {|f| f << "\n#{arr}"}
+        bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
+      end
     when "📰News"
-      bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
+      arr = ["#{message.from.id}", "#{message.from.first_name}", "#{message.from.last_name}"]
+
+      if File.readlines("users.txt").grep(/"#{arr.first}"/).size > 0
+        bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
+      else
+        File.open('users.txt', 'a') {|f| f << "\n#{arr}"}
+        bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
+      end
     when "💎RubyWeekly"
       bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "👨🏽‍💻DevBY"
@@ -222,7 +235,14 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when "🎙DailyNews"
       bot.api.send_message(chat_id: message.chat.id, text: dailynews, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🏟Sport"
-      bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
+      arr = ["#{message.from.id}", "#{message.from.first_name}", "#{message.from.last_name}"]
+
+      if File.readlines("users.txt").grep(/"#{arr.first}"/).size > 0
+        bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
+      else
+        File.open('users.txt', 'a') {|f| f << "\n#{arr}"}
+        bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
+      end
     when "⚽Live"
       bot.api.send_message(chat_id: message.chat.id, text: live, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "⬛️BlackBox"
@@ -234,7 +254,14 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when "⛅Weather"
       bot.api.send_message(chat_id: message.chat.id, text: weather, parse_mode: 'Markdown')
     when "🏦Currency"
-      bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
+      arr = ["#{message.from.id}", "#{message.from.first_name}", "#{message.from.last_name}"]
+
+      if File.readlines("users.txt").grep(/"#{arr.first}"/).size > 0
+        bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
+      else
+        File.open('users.txt', 'a') {|f| f << "\n#{arr}"}
+        bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
+      end
     end
   end
 end
