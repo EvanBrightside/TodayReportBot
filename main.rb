@@ -211,18 +211,8 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
   case message.text
     when "/start"
-      arr = ["#{message.from.id}", "#{message.from.first_name}", "#{message.from.last_name}"]
-
-      if File.readlines('tmp/users.txt').grep(/"#{arr.first}"/).size == 0
-        File.open('tmp/users.txt', 'a') {|f| f << "\n#{arr}"}
-      end
       bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
     when "📰News"
-      arr = ["#{message.from.id}", "#{message.from.first_name}", "#{message.from.last_name}"]
-
-      if File.readlines('tmp/users.txt').grep(/"#{arr.first}"/).size == 0
-        File.open('tmp/users.txt', 'a') {|f| f << "\n#{arr}"}
-      end
       bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
     when "💎RubyWeekly"
       bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
@@ -231,12 +221,6 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when "🎙DailyNews"
       bot.api.send_message(chat_id: message.chat.id, text: dailynews, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🏟Sport"
-      arr = ["#{message.from.id}", "#{message.from.first_name}", "#{message.from.last_name}"]
-
-      if File.readlines('tmp/users.txt').grep(/"#{arr.first}"/).size == 0
-        File.open('tmp/users.txt', 'a') {|f| f << "\n#{arr}"}
-        File.open('log/users.txt', 'a') {|f| f << "\n#{arr}"}
-      end
       bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
     when "⚽Live"
       bot.api.send_message(chat_id: message.chat.id, text: live, parse_mode: 'Markdown', disable_web_page_preview: true)
@@ -249,12 +233,6 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when "⛅Weather"
       bot.api.send_message(chat_id: message.chat.id, text: weather, parse_mode: 'Markdown')
     when "🏦Currency"
-      arr = ["#{message.from.id}", "#{message.from.first_name}", "#{message.from.last_name}"]
-
-      if File.readlines('tmp/users.txt').grep(/"#{arr.first}"/).size == 0
-        File.open('tmp/users.txt', 'a') {|f| f << "\n#{arr}"}
-        File.open('log/customers.csv', 'a') {|f| f << "\n#{arr}"}
-      end
       bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
     end
   end
