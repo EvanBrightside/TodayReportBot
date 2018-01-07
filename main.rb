@@ -109,18 +109,20 @@ end
 # .select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime("%d/%m/%Y") == Date.today.strftime("%d/%m/%Y") }
 
 def transfers
-  # transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/')
-  # transfers = []
-  # transfers_rss.items[0..10].each do |item|
-  #   title = "*#{item.title}*"
-  #   description = "`#{item.description}`"
-  #   link = "[Полная статья](#{item.link})"
-  #   transfers << [title, description, link]
-  # end
-  # transfers.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n "
-  sp_url = 'https://youtu.be/ww4pgZWOkqY'
+  transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/')
+  transfers = []
+  transfers_rss.items[0..10].each do |item|
+    title = "*#{item.title}*"
+    description = "`#{item.description}`"
+    link = "[Полная статья](#{item.link})"
+    transfers << [title, description, link]
+  end
+  transfers.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n "
+  rescue => e
+    "There are no `transfers` list for today now, we will update it soon! / You can check #{'http://www.sport-express.ru/football/transfers/'} at this time."
+  # sp_url = 'https://youtu.be/ww4pgZWOkqY'
   # Launchy.open sp_url
-  "Spartak! #{sp_url} "
+  # "Spartak! #{sp_url} "
 end
 
 def allsport
@@ -205,7 +207,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
   bot.listen do |message|
     markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], request_location: true, resize_keyboard: true)
 
-    sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(⬛️BlackBox ⬅️Back)], resize_keyboard: true)
+    sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(⬛️Transfers ⬅️Back)], resize_keyboard: true)
 
     news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(💎RubyWeekly ⬅️Back)], resize_keyboard: true)
 
@@ -224,7 +226,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
       bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
     when "⚽Live"
       bot.api.send_message(chat_id: message.chat.id, text: live, parse_mode: 'Markdown', disable_web_page_preview: true)
-    when "⬛️BlackBox"
+    when "⬛️Transfers"
       bot.api.send_message(chat_id: message.chat.id, text: transfers, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "📺AllSport"
       bot.api.send_message(chat_id: message.chat.id, text: allsport, parse_mode: 'Markdown', disable_web_page_preview: true)
