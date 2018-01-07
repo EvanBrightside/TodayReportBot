@@ -7,10 +7,15 @@ require 'httparty'
 require 'open-uri'
 require 'mongo'
 require 'launchy'
+require 'redis'
 
-TOKEN = "417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo"
+TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
 @user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5'
+
+redis_uri = ENV['REDISTOGO_URL'] || 'redis://localhost:6379'
+uri = URI.parse(redis_uri)
+REDIS = Redis.new(host: uri.host, port: uri.port, password: uri.password)
 
 def weather
   ForecastIO.api_key = '3865f8bb801a9ea17907c763534526c0'
@@ -18,19 +23,19 @@ def weather
   all_day = forecast[:daily][:data].first
   currently = forecast[:currently]
 
-  date = Time.at(all_day[:time]).strftime("%d %B %a")
+  date = Time.at(all_day[:time]).strftime('%d %B %a')
   summary = all_day[:summary]
   icon = all_day[:icon]
   temperature_now = currently[:temperature].round
   temperature_min = all_day[:temperatureMin].round
   temperature_max = all_day[:temperatureMax].round
-  sunrise = Time.at(all_day[:sunriseTime]).strftime("%H:%M")
-  sunset = Time.at(all_day[:sunsetTime]).strftime("%H:%M")
+  sunrise = Time.at(all_day[:sunriseTime]).strftime('%H:%M')
+  sunset = Time.at(all_day[:sunsetTime]).strftime('%H:%M')
   wind = all_day[:windSpeed].round(1)
 
-  t0 = temperature_now > 0 ? "+#{temperature_now}" : "#{temperature_now}"
-  t1 = temperature_min > 0 ? "+#{temperature_min}" : "#{temperature_min}"
-  t2 = temperature_max > 0 ? "+#{temperature_max}" : "#{temperature_max}"
+  t0 = temperature_now > 0 ? "+#{temperature_now}" : temperature_now.to_s
+  t1 = temperature_min > 0 ? "+#{temperature_min}" : temperature_min.to_s
+  t2 = temperature_max > 0 ? "+#{temperature_max}" : temperature_max.to_s
 
   if icon == "rain" || icon == "light rain"
     ic = "☔"
@@ -175,8 +180,8 @@ def currency
   ripple_h = ripple_response.parsed_response.first
   usd_rp = ripple_h["price_usd"]
 
-  currency_ex = [
-    "*Курсы валют на сегодня:*",
+  [
+    '*Курсы валют на сегодня:*',
     "🇺🇸 1 #{us_charcode} = #{us_value} RUB",
     "🇪🇺 1 #{eu_charcode} = #{eu_value} RUB",
     "🔶 1 BTC = #{usd_bt} USD",
@@ -211,10 +216,12 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
     news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(💎RubyWeekly ⬅️Back)], resize_keyboard: true)
 
-  case message.text
-    when "/start"
+    case message.text
+    when '/start'
+      REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
-    when "📰News"
+    when '📰News'
+      REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
     when "💎RubyWeekly"
       bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
@@ -223,6 +230,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when "🎙DailyNews"
       bot.api.send_message(chat_id: message.chat.id, text: dailynews, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🏟Sport"
+      REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
     when "⚽Live"
       bot.api.send_message(chat_id: message.chat.id, text: live, parse_mode: 'Markdown', disable_web_page_preview: true)
@@ -233,8 +241,10 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when "⬅️Back"
       bot.api.send_message(chat_id: message.chat.id, text: "Back to main menu", reply_markup: markup)
     when "⛅Weather"
+      REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: weather, parse_mode: 'Markdown')
     when "🏦Currency"
+      REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
     end
   end
