@@ -92,10 +92,13 @@ def live
   url = 'https://www.liveresult.ru/football/txt/rss'
   if HTTParty.get(url).code == 200
     rss = RSS::Parser.parse(url)
-    liga = %w[ Россия Италия Англия Германия Испания Франция Лига Международный Товарищеские Европы Мира ЧМ-2018 ].join('|')
-    soccer_rss = rss.items.select { |a| a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y') }.first(20)
+    liga = %w[ Россия Италия Англия Германия Испания Франция Лига Международный
+               Товарищеские Европы Мира ЧМ-2018 ].join('|')
+    soccer_rss = rss.items.select do |a|
+      a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+    end
     soccerlive = [] unless soccer_rss.empty?
-    soccer_rss.each do |item|
+    soccer_rss.first(10).each do |item|
       category = item.category.content.upcase
       title = item.title
       date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
