@@ -98,7 +98,7 @@ def live
       a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
     end
     soccerlive = [] unless soccer_rss.empty?
-    soccer_rss.first(28).each do |item|
+    soccer_rss.first(23).each do |item|
       category = item.category.content.upcase
       title = item.title
       date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
