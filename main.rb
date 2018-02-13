@@ -89,32 +89,32 @@ def devby
 end
 
 def live
-  # url = 'https://www.liveresult.ru/football/txt/rss'
-  # begin
-  #   if HTTParty.get(url).code == 200
-  #     rss = RSS::Parser.parse(url)
-  #     liga = %w[ Россия Италия Англия Германия Испания Франция Лига Международный
-  #                Товарищеские Европы Мира ЧМ-2018 ].join('|')
-  #     soccer_rss = rss.items.select do |a|
-  #       a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
-  #     end
-  #     soccerlive = [] unless soccer_rss.empty?
-  #     soccer_rss.first(25).each do |item|
-  #       category = item.category.content.upcase
-  #       title = item.title
-  #       date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
-  #       link = "[Ссылка на текстовую трансляцию](#{item.link})"
-  #       soccerlive << [category, title, date, link]
-  #     end
-  #     live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
-  #   else
+  url = 'https://www.liveresult.ru/football/txt/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = %w[ Россия Италия Англия Германия Испания Франция Лига Международный
+                 Товарищеские Европы Мира ЧМ-2018 ].join('|')
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        link = "[Ссылка на текстовую трансляцию](#{item.link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
       sp_url = 'https://youtu.be/ww4pgZWOkqY'
       # Launchy.open sp_url
       "Spartak! #{sp_url}"
-  #   end
-  # rescue => e
-  #   "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://www.liveresult.ru/'}"
-  # end
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://www.liveresult.ru/'}"
+  end
 end
 
 def transfers
@@ -208,11 +208,36 @@ def rubyweekly
     "Something wrong / You can check it on #{'https://rubyweekly.com/'}"
 end
 
+def olympic
+  begin
+    url = 'http://www.sport-express.ru/services/materials/news/se/'
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      allsport_rss = rss.items.select { |a| a.category.content =~ /ОЛИМПИАДА/}
+      allsport = []
+      allsport_rss[0..10].each do |item|
+        category = "*#{item.category.content.upcase}*"
+        title = "_#{item.title}_"
+        description = "`#{item.description}`"
+        link = "[Полная статья](#{item.link})"
+        allsport << [category, title, description, link]
+      end
+      sport = allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n "] ] }*"\n"
+      sport
+    else
+      url = 'https://www.liveresult.ru/pyeongchang2018/'
+      "Olympic2018! #{url}"
+    end
+  rescue
+    "Something wrong / You can check it here #{'https://www.liveresult.ru/pyeongchang2018/'}"
+  end
+end
+
 Telegram::Bot::Client.run(TOKEN) do |bot|
   bot.listen do |message|
     markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], request_location: true, resize_keyboard: true)
 
-    sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(⬛️Transfers ⬅️Back)], resize_keyboard: true)
+    sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(🔀Transfers 🏅Olympic2018), '⬅️Back'], resize_keyboard: true)
 
     news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(💎RubyWeekly ⬅️Back)], resize_keyboard: true)
 
@@ -234,10 +259,12 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
       bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
     when "⚽Live"
       bot.api.send_message(chat_id: message.chat.id, text: live, parse_mode: 'Markdown', disable_web_page_preview: true)
-    when "⬛️Transfers"
+    when "🔀 Transfers"
       bot.api.send_message(chat_id: message.chat.id, text: transfers, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "📺AllSport"
       bot.api.send_message(chat_id: message.chat.id, text: allsport, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "🏅Olympic2018"
+      bot.api.send_message(chat_id: message.chat.id, text: olympic, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "⬅️Back"
       bot.api.send_message(chat_id: message.chat.id, text: "Back to main menu", reply_markup: markup)
     when "⛅Weather"
