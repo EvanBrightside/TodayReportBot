@@ -8,6 +8,9 @@ require 'open-uri'
 require 'mongo'
 require 'launchy'
 require 'redis'
+require 'rufus-scheduler'
+
+scheduler = Rufus::Scheduler.new
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
@@ -235,7 +238,8 @@ end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
   bot.listen do |message|
-    markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], request_location: true, resize_keyboard: true)
+
+    markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], resize_keyboard: true)
 
     sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(⬅️Back)], resize_keyboard: true)
 
@@ -245,6 +249,12 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when '/start'
       REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
+
+      text = '🤖 - заплати за интернет 👨🏽‍💻 свет 💡 и квартиру 🏠'
+
+      scheduler.cron '00 09 30 * *', first: :now do
+        bot.api.send_message(chat_id: 114436135, text: text)
+      end
     when '📰News'
       REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
@@ -275,4 +285,5 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
       bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
     end
   end
+  scheduler.join
 end
