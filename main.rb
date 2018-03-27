@@ -250,9 +250,9 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
       REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
 
-      text = '🤖 - заплати за интернет 👨🏽‍💻 свет 💡 и квартиру 🏠'
+      text = '🤖 Так, срочно заплати за интернет 👨🏽‍💻 свет 💡 и квартиру 🏠'
 
-      scheduler.cron '00 09 30 * *', first: :now do
+      scheduler.cron '00 09 30 * *' do
         bot.api.send_message(chat_id: 114436135, text: text)
       end
     when '📰News'
