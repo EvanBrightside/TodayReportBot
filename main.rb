@@ -193,25 +193,26 @@ def currency
   ]*"\n"
 end
 
-def rubyweekly
-  begin
-    response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
-    doc = response.css('.main p a').attr('href').text
-    link = 'http://rubyweekly.com' + doc
-    feed = Nokogiri::XML(open(link, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
-    issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
-    rubyissues = []
-    issues.map do |s|
-      title = "*#{s.at_css('div[2]').text.upcase}*"
-      main_text = "`#{s.at_css('div[3]').text}`"
-      link = "[link](#{s.at_css('a')[:href]})"
-      rubyissues << [title, main_text, link]
-    end
-    rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
-  rescue => e
-    "Something wrong / You can check it on #{'https://rubyweekly.com/'}"
-  end
-end
+# def rubyweekly
+#   begin
+#     binding.pry
+#     response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
+#     doc = response.css('.main p a').attr('href').text
+#     link = 'http://rubyweekly.com' + doc
+#     feed = Nokogiri::XML(open(link, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
+#     issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
+#     rubyissues = []
+#     issues.map do |s|
+#       title = "*#{s.at_css('div[2]').text.upcase}*"
+#       main_text = "`#{s.at_css('div[3]').text}`"
+#       link = "[link](#{s.at_css('a')[:href]})"
+#       rubyissues << [title, main_text, link]
+#     end
+#     rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
+#   rescue => e
+#     "Something wrong / You can check it on #{'https://rubyweekly.com/'}"
+#   end
+# end
 
 # def olympic
 #   begin
@@ -245,7 +246,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
     sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(⬅️Back)], resize_keyboard: true)
 
-    news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(💎RubyWeekly ⬅️Back)], resize_keyboard: true)
+    news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(⬅️Back)], resize_keyboard: true)
 
     case message.text
     when '/start'
@@ -260,8 +261,8 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when '📰News'
       REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
-    when "💎RubyWeekly"
-      bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
+    # when "💎RubyWeekly"
+    #   bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "👨🏽‍💻DevBY"
       bot.api.send_message(chat_id: message.chat.id, text: devby, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🎙DailyNews"
