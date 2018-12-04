@@ -10,7 +10,7 @@ require 'launchy'
 require 'redis'
 require 'rufus-scheduler'
 
-scheduler = Rufus::Scheduler.new
+@scheduler = Rufus::Scheduler.new
 
 TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
 
@@ -82,10 +82,10 @@ end
 def devby
   items = Nokogiri::XML(open('https://dev.by/rss', {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
   devby = []
-  items.css('item')[0..5].map do |item|
+  items.css('entry')[0..5].map do |item|
     title = "*#{item.at_css('title').text.upcase}*"
-    description = "`#{item.at_css('description').children[1].text.gsub(/\<(.*?)\>|&mdash;|&#8203;/i,"").gsub(/&nbsp;|&laquo;|&raquo;/i," ").split("\n")[0]}`"
-    link = "[Полная статья](#{item.at_css('link').text})"
+    description = "`#{item.at_css('summary').children[0].text.gsub(/\<(.*?)\>|&mdash;|&#8203;/i,"").gsub(/&nbsp;|&laquo;|&raquo;/i," ").split("\n")[0]}`"
+    link = "[Полная статья](#{item.at_css('link').attributes['href'].value})"
     devby << [title, description, link]
   end
   devby.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
@@ -193,60 +193,92 @@ def currency
   ]*"\n"
 end
 
-# def rubyweekly
-#   begin
-#     binding.pry
-#     response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
-#     doc = response.css('.main p a').attr('href').text
-#     link = 'http://rubyweekly.com' + doc
-#     feed = Nokogiri::XML(open(link, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
-#     issues = feed.css('.issue-html .gowide').select { |a| a[:width] == '100%' }
-#     rubyissues = []
-#     issues.map do |s|
-#       title = "*#{s.at_css('div[2]').text.upcase}*"
-#       main_text = "`#{s.at_css('div[3]').text}`"
-#       link = "[link](#{s.at_css('a')[:href]})"
-#       rubyissues << [title, main_text, link]
-#     end
-#     rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
-#   rescue => e
-#     "Something wrong / You can check it on #{'https://rubyweekly.com/'}"
-#   end
-# end
+def rubyweekly
+  begin
+    response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
+    doc = response.css('.main p a').attr('href').text
+    link = 'http://rubyweekly.com' + doc
+    feed = Nokogiri::XML(open(link, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
+    issues = feed.css('.el-item .item')
+    rubyissues = []
+    issues.map do |s|
+      title = "*#{s.at_css('a').text.upcase}*"
+      main_text = "`#{s.at_css('p').children.map(&:text)[1]}`"
+      link = "[link](#{s.at_css('a')[:href]})"
+      rubyissues << [title, main_text, link]
+    end
+    rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
+  rescue => e
+    "Something wrong / You can check it on #{'https://rubyweekly.com/'}"
+  end
+end
 
-# def olympic
-#   begin
-#     url = 'http://www.sport-express.ru/services/materials/news/se/'
-#     if HTTParty.get(url).code == 200
-#       rss = RSS::Parser.parse(url)
-#       allsport_rss = rss.items.select { |a| a.category.content =~ /ОЛИМПИАДА/}
-#       allsport = []
-#       allsport_rss[0..10].each do |item|
-#         category = "*#{item.category.content.upcase}*"
-#         title = "_#{item.title}_"
-#         description = "`#{item.description}`"
-#         link = "[Полная статья](#{item.link})"
-#         allsport << [category, title, description, link]
-#       end
-#       sport = allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n "] ] }*"\n"
-#       sport
-#     else
-#       url = 'https://www.liveresult.ru/pyeongchang2018/'
-#       "Olympic2018! #{url}"
-#     end
-#   rescue
-#     "Something wrong / You can check it here #{'https://www.liveresult.ru/pyeongchang2018/'}"
-#   end
-# end
+def snownews
+  "SnowNews here"
+end
+
+def all_worldcup
+  url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
+  response = Nokogiri::HTML(open(url))
+  long_info_block = response.at_css('.w_480.f_left.mr_10')
+
+  info_block = []
+  long_info_block.css('.trophy.se_score.mb_10')[0..7].map do |el|
+    location = "*#{el.at_css('.ph_10.t_left.white').text.strip}*"
+    all_competitions = competitions(el)
+    all_competitions.unshift(location)
+    all_competitions = all_competitions.flatten
+    info_block = info_block << all_competitions
+    info_block << ""
+  end
+  info_block.map { |a| [ a ]  }*"\n"
+end
+
+def competitions(el)
+  competitions = []
+  main_url = 'http://winter.sport-express.ru'
+  el.css('.hidden').map do |q|
+    date_time = "`#{q.at_css('.w_1.ph_10').text + ' / ' + q.at_css('span').text}`"
+    description = if q.at_css('.t_left.lb.ph_10 a').nil?
+                    "`#{q.at_css('.t_left.lb.ph_10').children[0].text.strip + q.at_css('.t_left.lb.ph_10 span').text.strip}`"
+                  else
+                    "`#{q.at_css('.t_left.lb.ph_10').children[0].text.strip + q.at_css('.t_left.lb.ph_10 a').text.strip}`"
+                  end
+    results = if q.at_css('a').nil?
+                'Событие еще не состоялось'
+              else
+                "[Результаты](#{main_url + q.at_css('a')['href']})"
+              end
+    competitions << [date_time + ' | ' + description + ' | ' + results]
+  end
+end
+
+def closest_contest
+  'sss'
+  # binding.pry
+  # url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
+  # short_info_block = response.at_css('.w_230.f_left')
+  # long_info_block = response.at_css('.w_230.f_left')
+end
+
+def last_results
+  'ddd'
+  #binding.pry
+  #url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
+  #short_info_block = response.at_css('.w_230.f_left')
+  #long_info_block = response.at_css('.w_230.f_left')
+end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
   bot.listen do |message|
 
     markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], resize_keyboard: true)
 
-    sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(🔀Transfers ⬅️Back)], resize_keyboard: true)
+    sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(🔀Transfers Snowboard), %w( ⬅️Back)], resize_keyboard: true)
 
-    news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(⬅️Back)], resize_keyboard: true)
+    news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(💎RubyWeekly ⬅️Back)], resize_keyboard: true)
+
+    snowboard_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(SnowNews WorldCup), %w(ClosestContest LastResults), %w(⬅️Back)], resize_keyboard: true)
 
     case message.text
     when '/start'
@@ -255,14 +287,14 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
       text = '🤖 Так, срочно заплати за интернет 👨🏽‍💻 свет 💡 и квартиру 🏠'
 
-      scheduler.cron '00 09 30 * *' do
+      @scheduler.cron '00 09 30 * *' do
         bot.api.send_message(chat_id: 114436135, text: text)
       end
     when '📰News'
       REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
-    # when "💎RubyWeekly"
-    #   bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
+     when "💎RubyWeekly"
+       bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "👨🏽‍💻DevBY"
       bot.api.send_message(chat_id: message.chat.id, text: devby, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🎙DailyNews"
@@ -275,10 +307,18 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
       bot.api.send_message(chat_id: message.chat.id, text: transfers, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "📺AllSport"
       bot.api.send_message(chat_id: message.chat.id, text: allsport, parse_mode: 'Markdown', disable_web_page_preview: true)
-    # when "🏅Olympic2018"
-    #   bot.api.send_message(chat_id: message.chat.id, text: olympic, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "Snowboard"
+      bot.api.send_message(chat_id: message.chat.id, text: "Snowboard!", reply_markup: snowboard_kb)
+    when "SnowNews"
+      bot.api.send_message(chat_id: message.chat.id, text: snownews, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "WorldCup"
+      bot.api.send_message(chat_id: message.chat.id, text: all_worldcup, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "ClosestContest"
+      bot.api.send_message(chat_id: message.chat.id, text: closest_contest, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "LastResults"
+      bot.api.send_message(chat_id: message.chat.id, text: last_results, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "⬅️Back"
-      bot.api.send_message(chat_id: message.chat.id, text: "Back to main menu", reply_markup: markup)
+      bot.api.send_message(chat_id: message.chat.id, text: "Back", reply_markup: markup)
     when "⛅Weather"
       REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: weather, parse_mode: 'Markdown')
@@ -287,5 +327,5 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
       bot.api.send_message(chat_id: message.chat.id, text: currency, parse_mode: 'Markdown')
     end
   end
-  scheduler.join
+  @scheduler.join
 end
