@@ -234,51 +234,51 @@ def all_worldcup
   info_block.map { |a| [ a ]  }*"\n"
 end
 
-def competitions(el)
-  competitions = []
-  main_url = 'http://winter.sport-express.ru'
-  el.css('.hidden').map do |q|
-    date_time = "`#{q.at_css('.w_1.ph_10').text + ' / ' + q.at_css('span').text}`"
-    description = if q.at_css('.t_left.lb.ph_10 a').nil?
-                    "`#{q.at_css('.t_left.lb.ph_10').children[0].text.strip + q.at_css('.t_left.lb.ph_10 span').text.strip}`"
-                  else
-                    "`#{q.at_css('.t_left.lb.ph_10').children[0].text.strip + q.at_css('.t_left.lb.ph_10 a').text.strip}`"
-                  end
-    results = if q.at_css('a').nil?
-                'Событие еще не состоялось'
-              else
-                "[Результаты](#{main_url + q.at_css('a')['href']})"
-              end
-    competitions << [date_time + ' | ' + description + ' | ' + results]
-  end
-end
-
-def closest_contest
-  'sss'
-  # binding.pry
-  # url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
-  # short_info_block = response.at_css('.w_230.f_left')
-  # long_info_block = response.at_css('.w_230.f_left')
-end
-
-def last_results
-  'ddd'
-  #binding.pry
-  #url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
-  #short_info_block = response.at_css('.w_230.f_left')
-  #long_info_block = response.at_css('.w_230.f_left')
-end
+# def competitions(el)
+#   competitions = []
+#   main_url = 'http://winter.sport-express.ru'
+#   el.css('.hidden').map do |q|
+#     date_time = "`#{q.at_css('.w_1.ph_10').text + ' / ' + q.at_css('span').text}`"
+#     description = if q.at_css('.t_left.lb.ph_10 a').nil?
+#                     "`#{q.at_css('.t_left.lb.ph_10').children[0].text.strip + q.at_css('.t_left.lb.ph_10 span').text.strip}`"
+#                   else
+#                     "`#{q.at_css('.t_left.lb.ph_10').children[0].text.strip + q.at_css('.t_left.lb.ph_10 a').text.strip}`"
+#                   end
+#     results = if q.at_css('a').nil?
+#                 'Событие еще не состоялось'
+#               else
+#                 "[Результаты](#{main_url + q.at_css('a')['href']})"
+#               end
+#     competitions << [date_time + ' | ' + description + ' | ' + results]
+#   end
+# end
+#
+# def closest_contest
+#   'sss'
+#   # binding.pry
+#   # url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
+#   # short_info_block = response.at_css('.w_230.f_left')
+#   # long_info_block = response.at_css('.w_230.f_left')
+# end
+#
+# def last_results
+#   'ddd'
+#   #binding.pry
+#   #url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
+#   #short_info_block = response.at_css('.w_230.f_left')
+#   #long_info_block = response.at_css('.w_230.f_left')
+# end
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
   bot.listen do |message|
 
     markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📰News 🏟Sport), %w(⛅Weather 🏦Currency)], resize_keyboard: true)
 
-    sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(🔀Transfers Snowboard), %w( ⬅️Back)], resize_keyboard: true)
+    sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(📺AllSport ⚽Live), %w(🔀Transfers ⬅️Back)], resize_keyboard: true)
 
     news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(💎RubyWeekly ⬅️Back)], resize_keyboard: true)
 
-    snowboard_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(SnowNews WorldCup), %w(ClosestContest LastResults), %w(⬅️Back)], resize_keyboard: true)
+    # snowboard_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(SnowNews WorldCup), %w(ClosestContest LastResults), %w(⬅️Back)], resize_keyboard: true)
 
     case message.text
     when '/start'
@@ -307,16 +307,16 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
       bot.api.send_message(chat_id: message.chat.id, text: transfers, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "📺AllSport"
       bot.api.send_message(chat_id: message.chat.id, text: allsport, parse_mode: 'Markdown', disable_web_page_preview: true)
-    when "Snowboard"
-      bot.api.send_message(chat_id: message.chat.id, text: "Snowboard!", reply_markup: snowboard_kb)
-    when "SnowNews"
-      bot.api.send_message(chat_id: message.chat.id, text: snownews, parse_mode: 'Markdown', disable_web_page_preview: true)
-    when "WorldCup"
-      bot.api.send_message(chat_id: message.chat.id, text: all_worldcup, parse_mode: 'Markdown', disable_web_page_preview: true)
-    when "ClosestContest"
-      bot.api.send_message(chat_id: message.chat.id, text: closest_contest, parse_mode: 'Markdown', disable_web_page_preview: true)
-    when "LastResults"
-      bot.api.send_message(chat_id: message.chat.id, text: last_results, parse_mode: 'Markdown', disable_web_page_preview: true)
+    # when "Snowboard"
+    #   bot.api.send_message(chat_id: message.chat.id, text: "Snowboard!", reply_markup: snowboard_kb)
+    # when "SnowNews"
+    #   bot.api.send_message(chat_id: message.chat.id, text: snownews, parse_mode: 'Markdown', disable_web_page_preview: true)
+    # when "WorldCup"
+    #   bot.api.send_message(chat_id: message.chat.id, text: all_worldcup, parse_mode: 'Markdown', disable_web_page_preview: true)
+    # when "ClosestContest"
+    #   bot.api.send_message(chat_id: message.chat.id, text: closest_contest, parse_mode: 'Markdown', disable_web_page_preview: true)
+    # when "LastResults"
+    #   bot.api.send_message(chat_id: message.chat.id, text: last_results, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "⬅️Back"
       bot.api.send_message(chat_id: message.chat.id, text: "Back", reply_markup: markup)
     when "⛅Weather"
