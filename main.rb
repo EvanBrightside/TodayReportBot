@@ -106,7 +106,8 @@ def live
         category = item.category.content.upcase
         title = item.title
         date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
-        link = "[Ссылка на текстовую трансляцию](#{item.link})"
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
         soccerlive << [category, title, date, link]
       end
       live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
