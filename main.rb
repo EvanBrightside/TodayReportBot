@@ -92,7 +92,7 @@ def devby
 end
 
 def live
-  url = 'https://www.liveresult.ru/football/txt/rss'
+  url = 'https://www.liveresult.ru/football/matches/rss'
   begin
     if HTTParty.get(url).code == 200
       rss = RSS::Parser.parse(url)
@@ -268,6 +268,7 @@ end
 #   #short_info_block = response.at_css('.w_230.f_left')
 #   #long_info_block = response.at_css('.w_230.f_left')
 # end
+
 
 Telegram::Bot::Client.run(TOKEN) do |bot|
   bot.listen do |message|
