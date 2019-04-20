@@ -87,7 +87,7 @@ DEPENDENCIES
   telegram-bot-ruby
 
 RUBY VERSION
-   ruby 2.4.3p205
+   ruby 2.6.1p33
 
 BUNDLED WITH
-   1.16.1
+   1.17.2
