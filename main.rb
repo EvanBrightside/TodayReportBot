@@ -96,8 +96,8 @@ def live
   begin
     if HTTParty.get(url).code == 200
       rss = RSS::Parser.parse(url)
-      liga = %w[ Россия Италия Англия Германия Испания Франция Лига Международный
-                 Товарищеские Европы Мира ЧМ-2018 ].join('|')
+      liga = %w[ Лига Международный Товарищеские Европы Мира ].join('|')
+      # binding.pry
       soccer_rss = rss.items.select do |a|
         a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
       end
@@ -117,7 +117,243 @@ def live
       "Spartak! #{sp_url}"
     end
   rescue => e
-    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://www.liveresult.ru/'}"
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
+def live_ru
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Россия'
+      # binding.pry
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
+def live_ru
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Россия'
+      # binding.pry
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
+
+def live_ru
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Россия'
+      # binding.pry
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
+def live_it
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Италия'
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
+def live_en
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Англия'
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
+def live_de
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Германия'
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
+def live_es
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Испания'
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
+def live_fr
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Франция'
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
   end
 end
 
@@ -214,63 +450,6 @@ def rubyweekly
   end
 end
 
-def snownews
-  "SnowNews here"
-end
-
-def all_worldcup
-  url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
-  response = Nokogiri::HTML(open(url))
-  long_info_block = response.at_css('.w_480.f_left.mr_10')
-
-  info_block = []
-  long_info_block.css('.trophy.se_score.mb_10')[0..7].map do |el|
-    location = "*#{el.at_css('.ph_10.t_left.white').text.strip}*"
-    all_competitions = competitions(el)
-    all_competitions.unshift(location)
-    all_competitions = all_competitions.flatten
-    info_block = info_block << all_competitions
-    info_block << ""
-  end
-  info_block.map { |a| [ a ]  }*"\n"
-end
-
-# def competitions(el)
-#   competitions = []
-#   main_url = 'http://winter.sport-express.ru'
-#   el.css('.hidden').map do |q|
-#     date_time = "`#{q.at_css('.w_1.ph_10').text + ' / ' + q.at_css('span').text}`"
-#     description = if q.at_css('.t_left.lb.ph_10 a').nil?
-#                     "`#{q.at_css('.t_left.lb.ph_10').children[0].text.strip + q.at_css('.t_left.lb.ph_10 span').text.strip}`"
-#                   else
-#                     "`#{q.at_css('.t_left.lb.ph_10').children[0].text.strip + q.at_css('.t_left.lb.ph_10 a').text.strip}`"
-#                   end
-#     results = if q.at_css('a').nil?
-#                 'Событие еще не состоялось'
-#               else
-#                 "[Результаты](#{main_url + q.at_css('a')['href']})"
-#               end
-#     competitions << [date_time + ' | ' + description + ' | ' + results]
-#   end
-# end
-#
-# def closest_contest
-#   'sss'
-#   # binding.pry
-#   # url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
-#   # short_info_block = response.at_css('.w_230.f_left')
-#   # long_info_block = response.at_css('.w_230.f_left')
-# end
-#
-# def last_results
-#   'ddd'
-#   #binding.pry
-#   #url = 'http://winter.sport-express.ru/snowboard/worldcup/2018-2019/'
-#   #short_info_block = response.at_css('.w_230.f_left')
-#   #long_info_block = response.at_css('.w_230.f_left')
-# end
-
-
 Telegram::Bot::Client.run(TOKEN) do |bot|
   bot.listen do |message|
 
@@ -280,7 +459,9 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
     news_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🎙DailyNews 👨🏽‍💻DevBY), %w(💎RubyWeekly ⬅️Back)], resize_keyboard: true)
 
-    # snowboard_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(SnowNews WorldCup), %w(ClosestContest LastResults), %w(⬅️Back)], resize_keyboard: true)
+    liveresult_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🌏Countries 🏟Other), %w(⬅️Back)], resize_keyboard: true)
+
+    live_countries_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🇷🇺Russia 🇮🇹Italy), %w(🏴󠁧󠁢󠁥󠁮󠁧󠁿England 🇩🇪Germany), %w(🇪🇸Spain 🇫🇷France), %w(⬅️Back)], resize_keyboard: true)
 
     case message.text
     when '/start'
@@ -295,8 +476,8 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when '📰News'
       REDIS.set message.chat.id.to_s, message.chat.first_name.to_s
       bot.api.send_message(chat_id: message.chat.id, text: "Top News!", reply_markup: news_kb)
-     when "💎RubyWeekly"
-       bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "💎RubyWeekly"
+      bot.api.send_message(chat_id: message.chat.id, text: rubyweekly, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "👨🏽‍💻DevBY"
       bot.api.send_message(chat_id: message.chat.id, text: devby, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🎙DailyNews"
@@ -304,21 +485,27 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
     when "🏟Sport"
       bot.api.send_message(chat_id: message.chat.id, text: "Sport News!", reply_markup: sport_kb)
     when "⚽Live"
+      bot.api.send_message(chat_id: message.chat.id, text: "Championships by countries or other competitions?", reply_markup: liveresult_kb)
+    when "🌏Countries"
+      bot.api.send_message(chat_id: message.chat.id, text: "Choose a country please", reply_markup: live_countries_kb)
+    when "🇷🇺Russia"
+      bot.api.send_message(chat_id: message.chat.id, text: live_ru, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "🇮🇹Italy"
+      bot.api.send_message(chat_id: message.chat.id, text: live_it, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "🏴󠁧󠁢󠁥󠁮󠁧󠁿England"
+      bot.api.send_message(chat_id: message.chat.id, text: live_en, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "🇩🇪Germany"
+      bot.api.send_message(chat_id: message.chat.id, text: live_de, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "🇪🇸Spain"
+      bot.api.send_message(chat_id: message.chat.id, text: live_es, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "🇫🇷France"
+      bot.api.send_message(chat_id: message.chat.id, text: live_fr, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "🏟Other"
       bot.api.send_message(chat_id: message.chat.id, text: live, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🔀Transfers"
       bot.api.send_message(chat_id: message.chat.id, text: transfers, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "📺AllSport"
       bot.api.send_message(chat_id: message.chat.id, text: allsport, parse_mode: 'Markdown', disable_web_page_preview: true)
-    # when "Snowboard"
-    #   bot.api.send_message(chat_id: message.chat.id, text: "Snowboard!", reply_markup: snowboard_kb)
-    # when "SnowNews"
-    #   bot.api.send_message(chat_id: message.chat.id, text: snownews, parse_mode: 'Markdown', disable_web_page_preview: true)
-    # when "WorldCup"
-    #   bot.api.send_message(chat_id: message.chat.id, text: all_worldcup, parse_mode: 'Markdown', disable_web_page_preview: true)
-    # when "ClosestContest"
-    #   bot.api.send_message(chat_id: message.chat.id, text: closest_contest, parse_mode: 'Markdown', disable_web_page_preview: true)
-    # when "LastResults"
-    #   bot.api.send_message(chat_id: message.chat.id, text: last_results, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "⬅️Back"
       bot.api.send_message(chat_id: message.chat.id, text: "Back", reply_markup: markup)
     when "⛅Weather"
