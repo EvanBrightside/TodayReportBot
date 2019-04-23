@@ -357,6 +357,35 @@ def live_fr
   end
 end
 
+def live_nl
+  url = 'https://www.liveresult.ru/football/matches/rss'
+  begin
+    if HTTParty.get(url).code == 200
+      rss = RSS::Parser.parse(url)
+      liga = 'Франция'
+      soccer_rss = rss.items.select do |a|
+        a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      end
+      soccerlive = [] unless soccer_rss.empty?
+      soccer_rss.first(25).each do |item|
+        category = item.category.content.upcase
+        title = item.title
+        date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+        mobile_link = item.link.gsub("https://www.liveresult.ru/football/matches", "https://m.liveresult.ru/football/match")
+        link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
+        soccerlive << [category, title, date, link]
+      end
+      live = soccerlive.map { |a, s, d, f| [ "*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"] ] }*"\n"
+    else
+      sp_url = 'https://youtu.be/ww4pgZWOkqY'
+      # Launchy.open sp_url
+      "Spartak! #{sp_url}"
+    end
+  rescue => e
+    "There are no `live` list for today now, we will update it soon! / At this time you can check #{'https://m.liveresult.ru/'}"
+  end
+end
+
 def transfers
   transfers_rss = RSS::Parser.parse('http://www.sport-express.ru/services/materials/news/transfers/se/')
   transfers = []
@@ -461,7 +490,7 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
 
     liveresult_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🌏Countries 🏟Other), %w(⬅️Back)], resize_keyboard: true)
 
-    live_countries_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🇷🇺Russia 🇮🇹Italy), %w(🏴󠁧󠁢󠁥󠁮󠁧󠁿England 🇩🇪Germany), %w(🇪🇸Spain 🇫🇷France), %w(⬅️Back)], resize_keyboard: true)
+    live_countries_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w(🇷🇺Russia 🇮🇹Italy), %w(🏴󠁧󠁢󠁥󠁮󠁧󠁿England 🇩🇪Germany), %w(🇪🇸Spain 🇫🇷France), %w(🇳🇱Голландия ⬅️Back)], resize_keyboard: true)
 
     case message.text
     when '/start'
@@ -500,6 +529,8 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
       bot.api.send_message(chat_id: message.chat.id, text: live_es, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🇫🇷France"
       bot.api.send_message(chat_id: message.chat.id, text: live_fr, parse_mode: 'Markdown', disable_web_page_preview: true)
+    when "🇳🇱Голландия"
+      bot.api.send_message(chat_id: message.chat.id, text: live_nl, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🏟Other"
       bot.api.send_message(chat_id: message.chat.id, text: live, parse_mode: 'Markdown', disable_web_page_preview: true)
     when "🔀Transfers"
