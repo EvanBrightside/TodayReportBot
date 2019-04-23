@@ -362,7 +362,7 @@ def live_nl
   begin
     if HTTParty.get(url).code == 200
       rss = RSS::Parser.parse(url)
-      liga = 'Франция'
+      liga = 'Голландия'
       soccer_rss = rss.items.select do |a|
         a.category.content =~ /#{liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
       end
