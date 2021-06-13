@@ -5,8 +5,7 @@ require 'rss'
 require 'nokogiri'
 require 'httparty'
 require 'open-uri'
-
-TOKEN = '417609760:AAGPXHAH9gqmawMbqRWuE-UiCvmPjTnIAKo'
+require 'dotenv/load'
 
 @user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5'
 
@@ -72,7 +71,7 @@ def live
   url = 'https://www.liveresult.ru/football/matches/rss'
   if HTTParty.get(url).code == 200
     rss = RSS::Parser.parse(url)
-    exclude_liga = %w[Бразилия Австралия Америки].join('|')
+    exclude_liga = %w[Бразилия Австралия Америки Швеция].join('|')
     soccer_rss = rss.items.select do |a|
       a.category.content !~ /#{exclude_liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
     end
@@ -165,7 +164,7 @@ rescue StandardError
   'Something wrong / You can check it on https://rubyweekly.com'
 end
 
-Telegram::Bot::Client.run(TOKEN) do |bot|
+Telegram::Bot::Client.run(ENV['TG_TOKEN']) do |bot|
   bot.listen do |message|
     markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w[📰News 🏟Sport], %w[⛅Weather 🏦Currency]], resize_keyboard: true)
     sport_kb = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: [%w[📺AllSport ⚽Live], %w[🔀Transfers ⬅️Back]], resize_keyboard: true)
