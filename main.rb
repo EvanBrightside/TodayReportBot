@@ -6,6 +6,7 @@ require 'nokogiri'
 require 'httparty'
 require 'open-uri'
 require 'dotenv/load'
+require 'tzinfo'
 
 @user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5'
 
@@ -79,7 +80,7 @@ def live
     soccer_rss.first(25).each do |item|
       category = item.category.content.upcase
       title = item.title
-      date = item.pubDate.strftime('%d/%m/%Y - %H:%M')
+      date = TZInfo::Timezone.get('Europe/Moscow').to_local(item.pubDate).strftime('%d/%m/%Y - %H:%M %Z')
       mobile_link = item.link.gsub('https://www.liveresult.ru/football/matches', 'https://m.liveresult.ru/football/match')
       link = "[Ссылка на текстовую трансляцию](#{mobile_link})"
       soccerlive << [category, title, date, link]

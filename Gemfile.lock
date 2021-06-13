@@ -48,6 +48,8 @@ GEM
       inflecto
       virtus
     thread_safe (0.3.6)
+    tzinfo (2.0.4)
+      concurrent-ruby (~> 1.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -66,6 +68,7 @@ DEPENDENCIES
   openssl
   pry
   telegram-bot-ruby
+  tzinfo
 
 RUBY VERSION
    ruby 2.7.1p83
