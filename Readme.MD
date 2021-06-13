@@ -1,1 +1,1 @@
-Just add it in Telegram `@TodayReportBot`
+Just add it on Telegram `@TodayReportBot`
