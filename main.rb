@@ -93,7 +93,7 @@ rescue StandardError
 end
 
 def exclude_ligas
-  %w[Бразилия Австралия Америки Швеция Типпелиген Сегунда].join('|')
+  %w[Бразилия Австралия Америки Швеция Типпелиген Сегунда Вейккауслига].join('|')
 end
 
 def transfers
