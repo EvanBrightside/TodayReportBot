@@ -72,9 +72,8 @@ def live
   url = 'https://www.liveresult.ru/football/matches/rss'
   if HTTParty.get(url).code == 200
     rss = RSS::Parser.parse(url)
-    exclude_liga = %w[Бразилия Австралия Америки Швеция].join('|')
     soccer_rss = rss.items.select do |a|
-      a.category.content !~ /#{exclude_liga}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      a.category.content !~ /#{exclude_ligas}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
     end
     soccerlive = [] unless soccer_rss.empty?
     soccer_rss.first(25).each do |item|
@@ -91,6 +90,10 @@ def live
   end
 rescue StandardError
   'There are no `live` list for today now, we will update it soon! / At this time you can check https://m.liveresult.ru/'
+end
+
+def exclude_ligas
+  %w[Бразилия Австралия Америки Швеция Типпелиген Сегунда].join('|')
 end
 
 def transfers
