@@ -176,7 +176,7 @@ Telegram::Bot::Client.run(ENV['TG_TOKEN']) do |bot|
 
     case message.text
     when '/start'
-      bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}!", reply_markup: markup)
+      bot.api.send_message(chat_id: message.chat.id, text: "Hey, #{message&.from&.first_name}!", reply_markup: markup)
     when '📰News'
       bot.api.send_message(chat_id: message.chat.id, text: 'Top News!', reply_markup: news_kb)
     when '💎RubyWeekly'
