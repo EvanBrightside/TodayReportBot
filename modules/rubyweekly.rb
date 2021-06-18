@@ -1,8 +1,10 @@
-def rubyweekly
-  begin
+module Rubyweekly
+  module_function
+
+  def call
     response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
     doc = response.css('.main p a').attr('href').text
-    link = 'http://rubyweekly.com' + doc
+    link = "http://rubyweekly.com#{doc}"
     feed = Nokogiri::XML(open(link, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
     issues = feed.css('.el-item .item')
     rubyissues = []
@@ -13,7 +15,7 @@ def rubyweekly
       rubyissues << [title, main_text, link]
     end
     rubyissues.map { |a, s, d| [ a, s, ["#{d}\n"] ] }*"\n"
-  rescue => e
-    "Something wrong / You can check it on #{'https://rubyweekly.com/'}"
+  rescue StandardError
+    'Something wrong / You can check it on https://rubyweekly.com'
   end
 end

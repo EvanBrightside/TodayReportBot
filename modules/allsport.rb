@@ -1,5 +1,7 @@
-def allsport
-  begin
+module Allsport
+  module_function
+
+  def call
     url = 'http://www.sport-express.ru/services/materials/news/se/'
     if HTTParty.get(url).code == 200
       rss = RSS::Parser.parse(url)
@@ -12,13 +14,12 @@ def allsport
         link = "[Полная статья](#{item.link})"
         allsport << [category, title, description, link]
       end
-      sport = allsport.map { |a, s, d, f| [ a, s, d, ["#{f}\n "] ] }*"\n"
-      sport
+      allsport.map { |a, s, d, f| [a, s, d, ["#{f}\n "]] }.join("\n")
     else
       sp_url = 'https://youtu.be/ww4pgZWOkqY'
       "Spartak! #{sp_url}"
     end
-  rescue
+  rescue StandardError
     'Not avaliable now / telegram stuff, nothing to worry!'
   end
 end
