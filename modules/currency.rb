@@ -3,7 +3,7 @@ module Currency
 
   def call
     doc = Nokogiri::XML(
-      open('http://www.cbr.ru/scripts/XML_daily.asp?', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE })
+      URI.open('http://www.cbr.ru/scripts/XML_daily.asp?', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE })
     )
     us = doc.at_css('Valute[ID="R01235"]')
     us_charcode = us.at_css('CharCode').text

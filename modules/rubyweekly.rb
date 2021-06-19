@@ -2,10 +2,10 @@ module Rubyweekly
   module_function
 
   def call
-    response = Nokogiri::HTML(open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
+    response = Nokogiri::HTML(URI.open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
     doc = response.css('.main p a').attr('href').text
     link = "http://rubyweekly.com#{doc}"
-    feed = Nokogiri::XML(open(link, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
+    feed = Nokogiri::XML(URI.open(link, { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }))
     issues = feed.css('.el-item .item')
     rubyissues = []
     issues.map do |s|
