@@ -4,10 +4,8 @@ require_relative 'libs'
 
 Telegram::Bot::Client.run(ENV['TG_TOKEN']) do |bot|
   bot.listen do |message|
-    if message.is_a? Telegram::Bot::Types::Message
-      ProcessMessage.call(message, bot)
-    else
-      bot.logger.info('Not sure what to do with this type of message')
-    end
+    ProcessMessage.call(message, bot) if message.is_a? Telegram::Bot::Types::Message
+
+    bot.logger.info('Not sure what to do with this type of message')
   end
 end
