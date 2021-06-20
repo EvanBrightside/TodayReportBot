@@ -18,6 +18,8 @@ module Live
         soccerlive << [category, title, date, link]
       end
       soccerlive.map { |a, s, d, f| ["*#{a}*", "`#{s}`", "`#{d}`", ["#{f}\n"]] }.join("\n")
+    rescue StandardError
+      'Spartak! https://youtu.be/ww4pgZWOkqY'
     else
       'Spartak! https://youtu.be/ww4pgZWOkqY'
     end
