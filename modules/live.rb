@@ -6,7 +6,9 @@ module Live
     if HTTParty.get(url).code == 200
       rss = RSS::Parser.parse(url)
       soccer_rss = rss.items.select do |a|
-        a.category.content !~ /#{exclude_ligas}/ && a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+        liga = a.category.content&.downcase !~ /#{exclude_ligas.downcase}/
+        current_date = a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+        liga && current_date
       end
       soccerlive = [] unless soccer_rss.empty?
       soccer_rss.first(25).each do |item|
@@ -28,7 +30,7 @@ module Live
   def exclude_ligas
     [
       'Бразилия', 'Австралия', 'Типпелиген', 'Сегунда', 'Вейккауслига', 'Азия', 'Суперэттан',
-      'Норвегия / Первый дивизион', 'Беларусь / Премьер-лига', 'США / МЛС'
+      'Норвегия / Первый дивизион', 'Беларусь / Премьер-лига', 'США / МЛС', 'ЛИГА ЧЕМПИОНОВ АФК'
     ].join('|')
   end
 end
