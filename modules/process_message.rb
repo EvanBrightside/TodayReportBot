@@ -19,8 +19,6 @@ module ProcessMessage
       bot.api.send_message(chat_id: message.chat.id, text: Live.call, parse_mode: 'Markdown', disable_web_page_preview: true)
     when '🔀 Transfers'
       bot.api.send_message(chat_id: message.chat.id, text: Transfers.call, parse_mode: 'Markdown', disable_web_page_preview: true)
-    when '🥇 Olympic Games'
-      bot.api.send_message(chat_id: message.chat.id, text: Olympic.call, parse_mode: 'Markdown', disable_web_page_preview: true)
     when '📺 All Sport'
       bot.api.send_message(chat_id: message.chat.id, text: Allsport.call, parse_mode: 'Markdown', disable_web_page_preview: true)
     when '⛅ Weather'
@@ -41,7 +39,7 @@ module ProcessMessage
   end
 
   def sport_kb
-    tg_keyboard([['📺 All Sport', '⚽ Live'], ['🔀 Transfers', '🥇 Olympic Games'], ['⬅️ Back']])
+    tg_keyboard([['📺 All Sport', '⚽ Live'], ['🔀 Transfers', '⬅️ Back']])
   end
 
   def news_kb
