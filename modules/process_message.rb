@@ -25,6 +25,8 @@ module ProcessMessage
       bot.api.send_message(chat_id: message.chat.id, text: Weather.call, parse_mode: 'Markdown')
     when '🏦 Currency'
       bot.api.send_message(chat_id: message.chat.id, text: Currency.call, parse_mode: 'Markdown')
+    when 'Список дел'
+      bot.api.send_message(chat_id: message.chat.id, text: Todo.call, parse_mode: 'Markdown')
     end
   end
 
@@ -35,7 +37,7 @@ module ProcessMessage
   end
 
   def markup_kb
-    tg_keyboard([['📰 News', '🏟 Sport'], ['⛅ Weather', '🏦 Currency']])
+    tg_keyboard([['📰 News', '🏟 Sport'], ['⛅ Weather', '🏦 Currency'], ['Список дел']])
   end
 
   def sport_kb
