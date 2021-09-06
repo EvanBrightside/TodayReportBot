@@ -2,6 +2,9 @@ module Todo
   module_function
 
   def call
-    'https://todo-reactrails.herokuapp.com/'
+    {
+      text: 'Открыть приложение',
+      url: 'https://todo-reactrails.herokuapp.com/'
+    }
   end
 end

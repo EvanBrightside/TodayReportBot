@@ -25,8 +25,12 @@ module ProcessMessage
       bot.api.send_message(chat_id: message.chat.id, text: Weather.call, parse_mode: 'Markdown')
     when '🏦 Currency'
       bot.api.send_message(chat_id: message.chat.id, text: Currency.call, parse_mode: 'Markdown')
-    when 'Список дел'
-      bot.api.send_message(chat_id: message.chat.id, text: Todo.call, parse_mode: 'Markdown')
+    when '🗒 Список дел'
+      response = Todo.call
+      markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(
+        inline_keyboard: [Telegram::Bot::Types::InlineKeyboardButton.new(text: response[:text], url: response[:url])]
+      )
+      bot.api.send_message(chat_id: message.chat.id, text: 'Посмотреть / создать / обновить ⬇️', reply_markup: markup)
     end
   end
 
@@ -37,7 +41,7 @@ module ProcessMessage
   end
 
   def markup_kb
-    tg_keyboard([['📰 News', '🏟 Sport'], ['⛅ Weather', '🏦 Currency'], ['Список дел']])
+    tg_keyboard([['📰 News', '🏟 Sport'], ['⛅ Weather', '🏦 Currency'], ['🗒 Список дел']])
   end
 
   def sport_kb
