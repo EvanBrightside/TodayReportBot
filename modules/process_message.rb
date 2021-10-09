@@ -31,6 +31,12 @@ module ProcessMessage
         inline_keyboard: [Telegram::Bot::Types::InlineKeyboardButton.new(text: response[:text], url: response[:url])]
       )
       bot.api.send_message(chat_id: message.chat.id, text: 'Посмотреть / создать / обновить ⬇️', reply_markup: markup)
+    when '🏋️‍♂️ Fitness'
+      response = Fitness.call
+      markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(
+        inline_keyboard: [Telegram::Bot::Types::InlineKeyboardButton.new(text: response[:text], url: response[:url])]
+      )
+      bot.api.send_message(chat_id: message.chat.id, text: 'Расписание на неделю в FH ⬇️', reply_markup: markup)
     end
   end
 
@@ -41,7 +47,7 @@ module ProcessMessage
   end
 
   def markup_kb
-    tg_keyboard([['📰 News', '🏟 Sport'], ['⛅ Weather', '🏦 Currency'], ['🗒 Список дел']])
+    tg_keyboard([['📰 News', '🏟 Sport'], ['⛅ Weather', '🏦 Currency'], ['🗒 Список дел', '🏋️‍♂️ Fitness']])
   end
 
   def sport_kb
