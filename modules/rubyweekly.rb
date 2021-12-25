@@ -2,11 +2,11 @@ module Rubyweekly
   module_function
 
   def call
-    response = Nokogiri::HTML(URI.open('http://rubyweekly.com/', 'User-Agent' => @user_agent))
+    response = Nokogiri::HTML(URI.open('https://rubyweekly.com/', 'User-Agent' => @user_agent))
     doc = response.css('.main p a').attr('href').text
-    link = "http://rubyweekly.com#{doc}"
+    link = "https://rubyweekly.com#{doc}"
     feed = Nokogiri::XML(URI.open(link, { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }))
-    collect_issues(feed.css('.el-item .item'))
+    collect_issues(feed.css('.el-item.item'))
   rescue StandardError
     'Something wrong / You can check it on https://rubyweekly.com'
   end

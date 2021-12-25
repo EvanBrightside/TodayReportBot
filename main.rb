@@ -5,7 +5,10 @@ require_relative 'libs'
 Telegram::Bot::Client.run(ENV['TG_TOKEN']) do |bot|
   bot.listen do |message|
     ProcessMessage.call(message, bot) if message.is_a? Telegram::Bot::Types::Message
-
-    bot.logger.info('Not sure what to do with this type of message')
   end
+rescue Telegram::Bot::Exceptions::ResponseError => e
+  error_description = JSON.parse(e.response.body)['description']
+  puts error_description
+  bot.logger.info error_description
+  retry
 end
