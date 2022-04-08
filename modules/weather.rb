@@ -1,9 +1,15 @@
 module Weather
   module_function
 
-  def call
+  def call(city = nil)
+    city_coords = {
+      belgrade: { lat: '44.804', lon: '20.4651' },
+      spb: { lat: '59.92190399', lon: '30.45242786' }
+    }
+
     ForecastIO.api_key = ENV['WEATHER_API_KEY']
-    forecast = ForecastIO.forecast(59.92190399, 30.45242786, params: { lang: 'ru', exclude: 'alerts', units: 'auto' })
+    coords = city.nil? ? { lat: '59.92190399', lon: '30.45242786' } : city_coords[city]
+    forecast = ForecastIO.forecast(coords[:lat].to_f, coords[:lon].to_f, params: { lang: 'ru', exclude: 'alerts', units: 'auto' })
     all_day = forecast[:daily][:data].first
     currently = forecast[:currently]
 
@@ -37,8 +43,15 @@ module Weather
            icon
          end
 
+    city_name = {
+      belgrade: 'Белграде',
+      spb: 'Санкт-Петербурге'
+    }
+
+    today_city = city.nil? ? 'Санкт-Петербурге' : city_name[city]
+
     [
-      "*Сегодня в Санкт-Петербурге: #{ic}*",
+      "*Сегодня в #{today_city}: #{ic}*",
       "*Сейчас: #{t0}°C*",
       "Восход: #{sunrise}",
       "Закат #{sunset}",
