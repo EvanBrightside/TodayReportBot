@@ -25,7 +25,7 @@ module ProcessMessage
       bot.api.send_message(chat_id: message.chat.id, text: Allsport.call, parse_mode: 'Markdown', disable_web_page_preview: true)
     when '🇷🇺 Saint-P'
       bot.api.send_message(chat_id: message.chat.id, text: Weather.call(:spb), parse_mode: 'Markdown', disable_web_page_preview: true)
-    when '🇷🇸 Belgrage'
+    when '🇷🇸 Belgrade'
       bot.api.send_message(chat_id: message.chat.id, text: Weather.call(:belgrade), parse_mode: 'Markdown', disable_web_page_preview: true)
     when '🏦 Currency'
       bot.api.send_message(chat_id: message.chat.id, text: Currency.call, parse_mode: 'Markdown')
@@ -63,7 +63,7 @@ module ProcessMessage
   end
 
   def weather_kb
-    tg_keyboard([['🇷🇺 Saint-P', '🇷🇸 Belgrage'], ['⬅️ Back']])
+    tg_keyboard([['🇷🇺 Saint-P', '🇷🇸 Belgrade'], ['⬅️ Back']])
   end
 
   def tg_keyboard(keyboard_buttons)
