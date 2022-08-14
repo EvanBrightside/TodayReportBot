@@ -5,6 +5,7 @@ require_relative 'libs'
 Telegram::Bot::Client.run(ENV['TG_TOKEN']) do |bot|
   bot.listen do |message|
     ProcessMessage.call(message, bot) if message.is_a? Telegram::Bot::Types::Message
+    ProcessCallback.call(message, bot) if message.is_a? Telegram::Bot::Types::CallbackQuery
   end
 rescue Telegram::Bot::Exceptions::ResponseError => e
   error_description = JSON.parse(e.response.body)['description']

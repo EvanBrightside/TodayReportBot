@@ -1,13 +1,13 @@
 module Live
   module_function
 
-  def call
+  def call(rpl = nil)
     url = 'https://www.liveresult.ru/football/matches/rss'
     if HTTParty.get(url).code == 200
       rss = RSS::Parser.parse(url)
-      soccer_rss = rss.items.select do |a|
-        liga = a.category.content&.downcase !~ /#{exclude_ligas.downcase}/
-        current_date = a.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
+      soccer_rss = rss.items.select do |country|
+        liga = choose_liga(country, rpl)
+        current_date = country.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
         liga && current_date
       end
       soccerlive = [] unless soccer_rss.empty?
@@ -25,6 +25,13 @@ module Live
     end
   rescue StandardError
     'There are no `live` list for today now, we will update it soon! / At this time you can check https://m.liveresult.ru/'
+  end
+
+  def choose_liga(country, rpl)
+    return true if country.category.content.include?('РОССИЯ')
+    return false if rpl
+
+    country.category.content&.downcase !~ /#{exclude_ligas.downcase}/
   end
 
   def exclude_ligas
