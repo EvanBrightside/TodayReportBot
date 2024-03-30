@@ -1,6 +1,5 @@
 require 'telegram/bot'
 require 'pry'
-require 'forecast_io'
 require 'rss'
 require 'nokogiri'
 require 'httparty'
