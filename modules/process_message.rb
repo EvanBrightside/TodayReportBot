@@ -12,7 +12,7 @@ module ProcessMessage
     when '⛅ Weather'
       kb = [
         [
-          Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇷🇺 Saint-P', callback_data: 'spb'),
+          Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇷🇺 Saint-P', callback_data: 'saint-petersburg'),
           Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇷🇸 Belgrade', callback_data: 'belgrade')
         ]
       ]
@@ -21,11 +21,15 @@ module ProcessMessage
     when '⬅️ Back'
       bot.api.send_message(chat_id: message.chat.id, text: 'Back', reply_markup: markup_kb)
     when '💎 Ruby Weekly'
-      bot.api.send_message(chat_id: message.chat.id, text: Rubyweekly.call, parse_mode: 'Markdown', disable_web_page_preview: true)
+      web_app = Telegram::Bot::Types::WebAppInfo.new(url: Rubyweekly.call)
+      kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Open Web App', web_app: web_app)]]
+      markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
+      bot.api.send_message(chat_id: message.chat.id, text: 'Rubyweekly!', reply_markup: markup)
+      # bot.api.send_message(chat_id: message.chat.id, text: Rubyweekly.call, parse_mode: 'Markdown', disable_web_page_preview: true)
     when '🎙 Daily News'
       bot.api.send_message(chat_id: message.chat.id, text: Dailynews.call, parse_mode: 'Markdown', disable_web_page_preview: true)
     when '⚽ Live'
-      kb = [Telegram::Bot::Types::InlineKeyboardButton.new(text: '🐻 Russian Premier League', callback_data: 'rpl')]
+      kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: '🐻 Russian Premier League', callback_data: 'rpl')]]
       live_kb = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
       bot.api.send_message(chat_id: message.chat.id, text: Live.call, parse_mode: 'Markdown', disable_web_page_preview: true, reply_markup: live_kb)
     when '🔀 Transfers'
@@ -56,15 +60,15 @@ module ProcessMessage
   end
 
   def markup_kb
-    tg_keyboard([['📰 News', '🏟 Sport'], ['⛅ Weather', '🏦 Currency']]) # , ['🗒 Список дел', '🏋️‍♂️ Fitness']
+    tg_keyboard([[{ text: '📰 News' }, { text: '🏟 Sport' }], [{ text: '⛅ Weather' }, { text: '🏦 Currency' }]]) # , ['🗒 Список дел', '🏋️‍♂️ Fitness']
   end
 
   def sport_kb
-    tg_keyboard([['📺 All Sport', '⚽ Live'], ['🔀 Transfers', '⬅️ Back']])
+    tg_keyboard([[{ text: '📺 All Sport' }, { text: '⚽ Live' }], [{ text: '🔀 Transfers' }, { text: '⬅️ Back' }]])
   end
 
   def news_kb
-    tg_keyboard([['🎙 Daily News', '💎 Ruby Weekly'], ['⬅️ Back']])
+    tg_keyboard([[{ text: '🎙 Daily News' }, { text: '💎 Ruby Weekly' }], [{ text: '⬅️ Back' }]])
   end
 
   def tg_keyboard(keyboard_buttons)
