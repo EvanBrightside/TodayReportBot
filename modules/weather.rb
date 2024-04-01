@@ -49,7 +49,7 @@ module Weather
 
     city_name = {
       belgrade: 'Белграде',
-      spb: 'Санкт-Петербурге'
+      :"saint-petersburg" =>  'Санкт-Петербурге'
     }
 
     today_city = city.nil? ? 'Санкт-Петербурге' : city_name[city]
