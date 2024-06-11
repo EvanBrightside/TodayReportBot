@@ -7,9 +7,9 @@ module ProcessMessage
       bot.api.send_message(chat_id: message.chat.id, text: hello_message(message), reply_markup: markup_kb)
     when '⭐️ New Relic'
       web_app = Telegram::Bot::Types::WebAppInfo.new(url: Newrelic.call)
-      kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Open Web App', web_app: web_app)]]
+      kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: 'OPEN IT', web_app: web_app)]]
       markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
-      bot.api.send_message(chat_id: message.chat.id, text: 'NewRelic!', reply_markup: markup)
+      bot.api.send_message(chat_id: message.chat.id, text: '♻️ NewRelic Dashboard ♻️', reply_markup: markup)
     when '📰 News'
       bot.api.send_message(chat_id: message.chat.id, text: 'Top News!', reply_markup: news_kb)
     when '🏟 Sport'
