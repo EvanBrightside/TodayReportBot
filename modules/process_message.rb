@@ -5,6 +5,11 @@ module ProcessMessage
     case message.text
     when '/start'
       bot.api.send_message(chat_id: message.chat.id, text: hello_message(message), reply_markup: markup_kb)
+    when '⭐️ New Relic'
+      web_app = Telegram::Bot::Types::WebAppInfo.new(url: Newrelic.call)
+      kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Open Web App', web_app: web_app)]]
+      markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
+      bot.api.send_message(chat_id: message.chat.id, text: 'NewRelic!', reply_markup: markup)
     when '📰 News'
       bot.api.send_message(chat_id: message.chat.id, text: 'Top News!', reply_markup: news_kb)
     when '🏟 Sport'
@@ -68,7 +73,7 @@ module ProcessMessage
   end
 
   def news_kb
-    tg_keyboard([[{ text: '🎙 Daily News' }, { text: '💎 Ruby Weekly' }], [{ text: '⬅️ Back' }]])
+    tg_keyboard([[{ text: '🎙 Daily News' }, { text: '💎 Ruby Weekly' }], [{ text: '⭐️ New Relic' }, { text: '⬅️ Back' }]])
   end
 
   def tg_keyboard(keyboard_buttons)
