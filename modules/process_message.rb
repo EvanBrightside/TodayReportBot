@@ -19,6 +19,10 @@ module ProcessMessage
         [
           Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇷🇺 Saint-P', callback_data: 'saint-petersburg'),
           Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇷🇸 Belgrade', callback_data: 'belgrade')
+        ],
+        [
+          Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇪🇸 Bilbao', callback_data: 'bilbao'),
+          Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇪🇸 Gijon', callback_data: 'gijon')
         ]
       ]
       weather_kb = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
@@ -34,7 +38,10 @@ module ProcessMessage
     when '🎙 Daily News'
       bot.api.send_message(chat_id: message.chat.id, text: Dailynews.call, parse_mode: 'Markdown', disable_web_page_preview: true)
     when '⚽ Live'
-      kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: '🐻 Russian Premier League', callback_data: 'rpl')]]
+      kb = [
+        [Telegram::Bot::Types::InlineKeyboardButton.new(text: '🐻 Russian Premier League', callback_data: 'rpl')],
+        [Telegram::Bot::Types::InlineKeyboardButton.new(text: '🌍 Euro 2024', callback_data: 'euro24')]
+      ]
       live_kb = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
       bot.api.send_message(chat_id: message.chat.id, text: Live.call, parse_mode: 'Markdown', disable_web_page_preview: true, reply_markup: live_kb)
     when '🔀 Transfers'
