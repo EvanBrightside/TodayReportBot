@@ -1,12 +1,12 @@
 module Live
   module_function
 
-  def call(rpl = nil)
+  def call(tournament = nil)
     url = 'https://www.liveresult.ru/football/matches/rss'
     if HTTParty.get(url).code == 200
       rss = RSS::Parser.parse(url)
       soccer_rss = rss.items.select do |country|
-        liga = choose_liga(country, rpl)
+        liga = choose_liga(country, tournament)
         current_date = country.pubDate.strftime('%d/%m/%Y') == Date.today.strftime('%d/%m/%Y')
         liga && current_date
       end
@@ -27,11 +27,14 @@ module Live
     'There are no `live` list for today now, we will update it soon! / At this time you can check https://m.liveresult.ru/'
   end
 
-  def choose_liga(country, rpl)
-    return true if country.category.content.include?('РОССИЯ')
-    return false if rpl
-
-    country.category.content&.downcase !~ /#{exclude_ligas.downcase}/
+  def choose_liga(country, tournament)
+    if tournament == :rpl
+      return true if country.category.content.include?('РОССИЯ')
+    elsif tournament == :euro24
+      return true if country.category.content.include?('ЕВРО-2024')
+    else
+      country.category.content&.downcase !~ /#{exclude_ligas.downcase}/
+    end
   end
 
   def exclude_ligas
