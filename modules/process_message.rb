@@ -5,11 +5,6 @@ module ProcessMessage
     case message.text
     when '/start'
       bot.api.send_message(chat_id: message.chat.id, text: hello_message(message), reply_markup: markup_kb)
-    when '⭐️ New Relic'
-      web_app = Telegram::Bot::Types::WebAppInfo.new(url: Newrelic.call)
-      kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: 'OPEN IT', web_app: web_app)]]
-      markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
-      bot.api.send_message(chat_id: message.chat.id, text: '♻️ NewRelic Dashboard ♻️', reply_markup: markup)
     when '🐬 DELFIN 🐬'
       web_app = Telegram::Bot::Types::WebAppInfo.new(url: Delfin.call)
       kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Deflin Travel Service', web_app: web_app)]]
