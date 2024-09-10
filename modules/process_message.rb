@@ -10,6 +10,11 @@ module ProcessMessage
       kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: 'OPEN IT', web_app: web_app)]]
       markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
       bot.api.send_message(chat_id: message.chat.id, text: '♻️ NewRelic Dashboard ♻️', reply_markup: markup)
+    when '🐬 DELFIN 🐬'
+      web_app = Telegram::Bot::Types::WebAppInfo.new(url: Delfin.call)
+      kb = [[Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Deflin Travel Service', web_app: web_app)]]
+      markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
+      bot.api.send_message(chat_id: message.chat.id, text: 'We can help with your request!', reply_markup: markup)
     when '📰 News'
       bot.api.send_message(chat_id: message.chat.id, text: 'Top News!', reply_markup: news_kb)
     when '🏟 Sport'
@@ -39,8 +44,7 @@ module ProcessMessage
       bot.api.send_message(chat_id: message.chat.id, text: Dailynews.call, parse_mode: 'Markdown', disable_web_page_preview: true)
     when '⚽ Live'
       kb = [
-        [Telegram::Bot::Types::InlineKeyboardButton.new(text: '🐻 Russian Premier League', callback_data: 'rpl')],
-        [Telegram::Bot::Types::InlineKeyboardButton.new(text: '🌍 Euro 2024', callback_data: 'euro24')]
+        [Telegram::Bot::Types::InlineKeyboardButton.new(text: '🐻 Russian Premier League', callback_data: 'rpl')]
       ]
       live_kb = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
       bot.api.send_message(chat_id: message.chat.id, text: Live.call, parse_mode: 'Markdown', disable_web_page_preview: true, reply_markup: live_kb)
@@ -72,7 +76,7 @@ module ProcessMessage
   end
 
   def markup_kb
-    tg_keyboard([[{ text: '📰 News' }, { text: '🏟 Sport' }], [{ text: '⛅ Weather' }, { text: '🏦 Currency' }]]) # , ['🗒 Список дел', '🏋️‍♂️ Fitness']
+    tg_keyboard([[{ text: '📰 News' }, { text: '🏟 Sport' }], [{ text: '⛅ Weather' }, { text: '🏦 Currency' }], [{ text: '🐬 DELFIN 🐬'}]]) # ['🗒 Список дел', '🏋️‍♂️ Fitness']
   end
 
   def sport_kb
