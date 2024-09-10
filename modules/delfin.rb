@@ -2,7 +2,7 @@ module Delfin
   module_function
 
   def call
-    'https://my.delfin.app/'
+    'https://delfin.app/'
   rescue StandardError
     'Something wrong'
   end
