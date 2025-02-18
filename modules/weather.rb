@@ -51,7 +51,7 @@ module Weather
       belgrade: 'Белграде',
       :"saint-petersburg" =>  'Санкт-Петербурге',
       bilbao: 'Бильбао',
-      gijon: 'Хихоне',
+      paris: 'Париже',
     }
 
     today_city = city.nil? ? 'Санкт-Петербурге' : city_name[city]
