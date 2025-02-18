@@ -3,7 +3,7 @@ module ProcessCallback
 
   def call(message, bot)
     info = case message.data
-           when 'saint-petersburg', 'belgrade', 'bilbao', 'gijon'
+           when 'saint-petersburg', 'belgrade', 'bilbao', 'paris'
             weather_for(message.data.to_sym)
            when 'rpl'
             live(message.data.to_sym)

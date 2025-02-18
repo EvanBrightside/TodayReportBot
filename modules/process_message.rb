@@ -5,6 +5,8 @@ module ProcessMessage
     case message.text
     when '/start'
       bot.api.send_message(chat_id: message.chat.id, text: hello_message(message), reply_markup: markup_kb)
+    when '/dev'
+      bot.api.send_message(chat_id: message.chat.id, text: 'Dev options', reply_markup: dev_kb)
     when '📰 News'
       bot.api.send_message(chat_id: message.chat.id, text: 'Top News!', reply_markup: news_kb)
     when '🏟 Sport'
@@ -17,7 +19,7 @@ module ProcessMessage
         ],
         [
           Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇪🇸 Bilbao', callback_data: 'bilbao'),
-          Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇪🇸 Gijon', callback_data: 'gijon')
+          Telegram::Bot::Types::InlineKeyboardButton.new(text: '🇫🇷 Paris', callback_data: 'paris')
         ]
       ]
       weather_kb = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
@@ -56,6 +58,8 @@ module ProcessMessage
         inline_keyboard: [Telegram::Bot::Types::InlineKeyboardButton.new(text: response[:text], url: response[:url])]
       )
       bot.api.send_message(chat_id: message.chat.id, text: 'Расписание на неделю в FH ⬇️', reply_markup: markup)
+    when 'Get PIM'
+      bot.api.send_message(chat_id: message.chat.id, text: Dev.call('PIM'), parse_mode: 'Markdown')
     end
   end
 
@@ -74,7 +78,11 @@ module ProcessMessage
   end
 
   def news_kb
-    tg_keyboard([[{ text: '🎙 Daily News' }, { text: '💎 Ruby Weekly' }], [{ text: '⭐️ New Relic' }, { text: '⬅️ Back' }]])
+    tg_keyboard([[{ text: '🎙 Daily News' }, { text: '💎 Ruby Weekly' }], [{ text: '⬅️ Back' }]])
+  end
+
+  def dev_kb
+    tg_keyboard([[{ text: 'Get PIM' }], [{ text: '⬅️ Back' }]])
   end
 
   def tg_keyboard(keyboard_buttons)
